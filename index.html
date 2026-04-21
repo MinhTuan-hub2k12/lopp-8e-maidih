@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 Game Đoán Số | MinhTuan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>✋ Nhận diện tay - Chụp ảnh trong khung</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -21,318 +21,478 @@
             padding: 20px;
         }
 
-        .game-container {
-            background: rgba(255, 255, 255, 0.95);
+        .container {
+            background: rgba(255,255,255,0.1);
             border-radius: 30px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h1 {
-            color: #1e3c72;
-            margin-bottom: 10px;
-            font-size: 2em;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-style: italic;
-        }
-
-        .message-area {
-            background: #f0f4ff;
             padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        .message {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #1e3c72;
-            margin-bottom: 10px;
+        .camera-wrapper {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .attempt {
-            color: #2a5298;
-            font-size: 1.1em;
+        video, canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        input {
-            width: 80%;
-            padding: 12px;
-            font-size: 1.2em;
-            text-align: center;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            transition: 0.3s;
+        video {
+            transform: scaleX(-1);
         }
 
-        input:focus {
-            outline: none;
-            border-color: #2a5298;
-            box-shadow: 0 0 10px rgba(42,82,152,0.2);
+        canvas {
+            transform: scaleX(-1);
+        }
+
+        #videoElement {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 4 / 3;
+            background: #000;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         button {
-            background: #2a5298;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: 1em;
-            border-radius: 10px;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 50px;
             cursor: pointer;
-            margin: 5px;
-            transition: transform 0.2s, background 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
         }
 
         button:hover {
-            background: #1e3c72;
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
         button:active {
-            transform: scale(0.98);
+            transform: translateY(0);
         }
 
-        .reset-btn {
-            background: #e74c3c;
+        .capture-btn {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
         }
 
-        .reset-btn:hover {
-            background: #c0392b;
-        }
-
-        .history {
+        .info {
             margin-top: 20px;
             padding: 15px;
-            background: #f9f9f9;
+            background: rgba(0,0,0,0.7);
             border-radius: 15px;
-            font-size: 0.9em;
-            max-height: 150px;
-            overflow-y: auto;
+            color: white;
+            text-align: center;
         }
 
-        .history-title {
+        .finger-count {
+            font-size: 2em;
             font-weight: bold;
-            color: #1e3c72;
+            color: #ffd700;
+        }
+
+        .status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .status.in-frame {
+            background: #4caf50;
+            animation: pulse 1s infinite;
+        }
+
+        .status.out-frame {
+            background: #f44336;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview img {
+            max-width: 200px;
+            border-radius: 10px;
+            border: 3px solid #667eea;
+            margin-top: 10px;
+        }
+
+        h3 {
             margin-bottom: 10px;
+            color: white;
         }
 
-        .history-list {
-            list-style: none;
-            color: #555;
-        }
-
-        .history-list li {
-            padding: 3px 0;
-        }
-
-        footer {
-            margin-top: 25px;
-            font-size: 0.8em;
-            color: #999;
+        @media (max-width: 600px) {
+            button { padding: 8px 20px; font-size: 0.9em; }
+            .info { font-size: 0.9em; }
         }
     </style>
+    <!-- Thêm thư viện MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 </head>
 <body>
 
-<div class="game-container">
-    <h1>🎲 Game Đoán Số</h1>
-    <div class="subtitle">Máy tính đã chọn 1 số từ 1 → 100</div>
-
-    <div class="message-area">
-        <div class="message" id="message">🔮 Nhập số dự đoán của bạn!</div>
-        <div class="attempt" id="attempt">📊 Số lần đoán: 0</div>
+<div class="container">
+    <div class="camera-wrapper">
+        <div id="videoElement" style="position: relative;">
+            <video id="video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+            <canvas id="canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1);"></canvas>
+        </div>
     </div>
 
-    <input type="number" id="guessInput" placeholder="Nhập số từ 1 đến 100" min="1" max="100">
-    <br>
-    <button id="guessBtn">🎯 Đoán ngay!</button>
-    <button id="resetBtn" class="reset-btn">🔄 Chơi lại</button>
-
-    <div class="history">
-        <div class="history-title">📜 Lịch sử đoán</div>
-        <ul class="history-list" id="historyList">
-            <li>✨ Chưa có lượt đoán nào</li>
-        </ul>
+    <div class="controls">
+        <button id="captureBtn" class="capture-btn">📸 CHỤP ẢNH</button>
+        <button id="toggleFrameBtn">🟩 BẬT/TẮT KHUNG</button>
     </div>
-    <footer>💡 Gợi ý: số càng gần, mình sẽ bảo "nóng hơn" đó!</footer>
+
+    <div class="info">
+        <div>✋ Số ngón tay: <span id="fingerCount" class="finger-count">0</span></div>
+        <div id="handStatus" class="status out-frame">🔴 Tay chưa trong khung</div>
+        <div id="tip">💡 Hướng dẫn: Đưa tay vào khung màu xanh lá ➕ Bấm nút chụp hoặc để tự động</div>
+    </div>
+
+    <div class="preview">
+        <h3>📷 Ảnh vừa chụp</h3>
+        <img id="capturedImage" src="" alt="Chưa có ảnh" style="display: none;">
+        <div id="noImage">Chưa có ảnh nào</div>
+    </div>
 </div>
 
 <script>
-    // === BIẾN TOÀN CỤC ===
-    let secretNumber = Math.floor(Math.random() * 100) + 1;
-    let attempts = 0;
-    let history = [];
+    // Lấy các element
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const captureBtn = document.getElementById('captureBtn');
+    const fingerCountSpan = document.getElementById('fingerCount');
+    const handStatusDiv = document.getElementById('handStatus');
+    const capturedImg = document.getElementById('capturedImage');
+    const noImageDiv = document.getElementById('noImage');
+    const toggleFrameBtn = document.getElementById('toggleFrameBtn');
 
-    // === LẤY CÁC PHẦN TỬ HTML ===
-    const messageEl = document.getElementById('message');
-    const attemptEl = document.getElementById('attempt');
-    const guessInput = document.getElementById('guessInput');
-    const guessBtn = document.getElementById('guessBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const historyList = document.getElementById('historyList');
+    let showFrame = true; // Hiển thị khung hướng dẫn
+    let handsDetected = false;
+    let handPosition = null;
+    let currentFingers = 0;
 
-    // === HÀM CẬP NHẬT LỊCH SỬ HIỂN THỊ ===
-    function updateHistoryDisplay() {
-        if (history.length === 0) {
-            historyList.innerHTML = '<li>✨ Chưa có lượt đoán nào</li>';
-            return;
-        }
-        
-        historyList.innerHTML = '';
-        // Hiển thị lịch sử từ mới nhất đến cũ nhất
-        const reversedHistory = [...history].reverse();
-        reversedHistory.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            historyList.appendChild(li);
-        });
-        // Tự động cuộn xuống cuối (hiển thị mới nhất)
-        const historyDiv = document.querySelector('.history');
-        historyDiv.scrollTop = historyDiv.scrollHeight;
-    }
+    // Khung giới hạn (vùng chụp ảnh lý tưởng)
+    let frameRect = { x: 0, y: 0, w: 0, h: 0 };
+    let frameVisible = true;
 
-    // === HÀM HIỂN THỊ THÔNG BÁO (có hiệu ứng) ===
-    function setMessage(text, isSuccess = false) {
-        messageEl.textContent = text;
-        messageEl.style.transition = '0.2s';
-        if (isSuccess) {
-            messageEl.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                messageEl.style.transform = 'scale(1)';
-            }, 200);
-        } else {
-            messageEl.style.transform = 'scale(1)';
-        }
-    }
-
-    // === HÀM XỬ LÝ KHI ĐOÁN ===
-    function checkGuess() {
-        // Lấy giá trị từ input
-        let guess = parseInt(guessInput.value);
-        
-        // Kiểm tra hợp lệ
-        if (isNaN(guess)) {
-            setMessage('⚠️ Vui lòng nhập một số!', false);
-            return;
-        }
-        
-        if (guess < 1 || guess > 100) {
-            setMessage('⚠️ Số phải từ 1 đến 100!', false);
-            return;
-        }
-        
-        // Tăng số lần đoán
-        attempts++;
-        attemptEl.textContent = `📊 Số lần đoán: ${attempts}`;
-        
-        // Đoán số
-        let feedback = '';
-        let isCorrect = false;
-        
-        if (guess === secretNumber) {
-            feedback = `🎉 CHÍNH XÁC! Bạn đã đoán đúng số ${secretNumber} sau ${attempts} lần! 🎉`;
-            setMessage(feedback, true);
-            isCorrect = true;
-            guessBtn.disabled = true; // Vô hiệu hóa nút đoán khi thắng
-        } else if (guess < secretNumber) {
-            const diff = secretNumber - guess;
-            if (diff <= 10) {
-                feedback = `🔥 RẤT GẦN! Số ${guess} quá THẤP một chút! (Còn thiếu ${diff})`;
-            } else {
-                feedback = `📉 QUÁ THẤP! Số ${guess} nhỏ hơn số bí mật.`;
-            }
-            setMessage(feedback, false);
-        } else {
-            const diff = guess - secretNumber;
-            if (diff <= 10) {
-                feedback = `🔥 RẤT GẦN! Số ${guess} quá CAO một chút! (Còn dư ${diff})`;
-            } else {
-                feedback = `📈 QUÁ CAO! Số ${guess} lớn hơn số bí mật.`;
-            }
-            setMessage(feedback, false);
-        }
-        
-        // Thêm vào lịch sử
-        const historyEntry = `Lần ${attempts}: Đoán ${guess} → ${isCorrect ? '✅ Đúng' : (guess < secretNumber ? '⬇️ Thấp hơn' : '⬆️ Cao hơn')}`;
-        history.push(historyEntry);
-        updateHistoryDisplay();
-        
-        // Xóa ô input và focus
-        guessInput.value = '';
-        guessInput.focus();
-        
-        // Nếu đoán đúng, thêm hiệu ứng vui
-        if (isCorrect) {
-            document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
-            setTimeout(() => {
-                document.body.style.background = "linear-gradient(135deg, #1e3c72, #2a5298)";
-            }, 1000);
-        }
-    }
-    
-    // === HÀM RESET GAME ===
-    function resetGame() {
-        // Tạo số mới
-        secretNumber = Math.floor(Math.random() * 100) + 1;
-        attempts = 0;
-        history = [];
-        
-        // Reset giao diện
-        attemptEl.textContent = `📊 Số lần đoán: 0`;
-        setMessage('🎮 Game mới! Hãy đoán số từ 1 đến 100', false);
-        guessInput.value = '';
-        guessBtn.disabled = false;
-        updateHistoryDisplay();
-        guessInput.focus();
-        
-        // Hiệu ứng nhẹ khi reset
-        const container = document.querySelector('.game-container');
-        container.style.transform = 'scale(0.98)';
-        setTimeout(() => {
-            container.style.transform = 'scale(1)';
-        }, 150);
-        
-        // Log để debug (bạn có thể mở console để xem số nếu muốn test)
-        console.log(`🎲 Game mới! Số bí mật là: ${secretNumber}`);
-    }
-    
-    // === GÁN SỰ KIỆN CHO NÚT ===
-    guessBtn.addEventListener('click', checkGuess);
-    resetBtn.addEventListener('click', resetGame);
-    
-    // Cho phép nhấn phím Enter để đoán nhanh
-    guessInput.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            if (!guessBtn.disabled) {
-                checkGuess();
-            }
+    // Khởi tạo MediaPipe Hands
+    const hands = new Hands({
+        locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
         }
     });
-    
-    // Khởi tạo thông báo console (hữu ích để kiểm tra)
-    console.log(`🎮 Game đã sẵn sàng! Số bí mật là: ${secretNumber} (bạn có thể xem ở đây để test)`);
-</script>
 
+    hands.setOptions({
+        maxNumHands: 1,
+        modelComplexity: 1,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+    });
+
+    // Hàm đếm số ngón tay đang giơ lên
+    function countFingers(landmarks) {
+        // Các điểm mốc của ngón tay (theo MediaPipe)
+        // Mỗi ngón có 4 điểm: MCP, PIP, DIP, TIP
+        const fingerTips = [4, 8, 12, 16, 20]; // Đầu ngón cái, trỏ, giữa, áp út, út
+        const fingerMCPs = [2, 5, 9, 13, 17]; // Khớp gốc tương ứng
+        
+        let count = 0;
+        
+        // Đặc biệt: ngón cái (so sánh x)
+        if (landmarks[fingerTips[0]].x > landmarks[fingerMCPs[0]].x) {
+            count++;
+        }
+        
+        // 4 ngón còn lại: so sánh y (vì tay hướng lên)
+        for (let i = 1; i < 5; i++) {
+            if (landmarks[fingerTips[i]].y < landmarks[fingerMCPs[i]].y) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+
+    // Hàm kiểm tra tay có nằm trong khung không
+    function isHandInFrame(landmarks, frame) {
+        if (!landmarks || landmarks.length === 0) return false;
+        
+        // Lấy bounding box của bàn tay
+        let minX = 1, minY = 1, maxX = 0, maxY = 0;
+        for (let lm of landmarks) {
+            minX = Math.min(minX, lm.x);
+            minY = Math.min(minY, lm.y);
+            maxX = Math.max(maxX, lm.x);
+            maxY = Math.max(maxY, lm.y);
+        }
+        
+        // Chuyển sang tọa độ pixel
+        const handLeft = minX * canvas.width;
+        const handRight = maxX * canvas.width;
+        const handTop = minY * canvas.height;
+        const handBottom = maxY * canvas.height;
+        
+        // Kiểm tra nếu bàn tay nằm trong khung
+        return (handLeft >= frame.x && handRight <= frame.x + frame.w &&
+                handTop >= frame.y && handBottom <= frame.y + frame.h);
+    }
+
+    // Vẽ khung và các điểm lên canvas
+    function drawResults(landmarks, frame) {
+        if (!ctx) return;
+        
+        // Xóa canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Vẽ khung hướng dẫn nếu bật
+        if (frameVisible && showFrame) {
+            ctx.strokeStyle = '#4caf50';
+            ctx.lineWidth = 4;
+            ctx.setLineDash([10, 15]);
+            ctx.strokeRect(frame.x, frame.y, frame.w, frame.h);
+            ctx.setLineDash([]);
+            
+            // Thêm text hướng dẫn
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#4caf50';
+            ctx.shadowBlur = 0;
+            ctx.fillText('👉 Đưa tay vào đây 👈', frame.x + 10, frame.y - 5);
+        }
+        
+        if (landmarks) {
+            // Vẽ các điểm mốc của bàn tay
+            for (let lm of landmarks) {
+                ctx.beginPath();
+                ctx.arc(lm.x * canvas.width, lm.y * canvas.height, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = handsDetected ? '#00ff00' : '#ff0000';
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            
+            // Nối các điểm để tạo khung tay (đơn giản)
+            if (landmarks.length >= 21) {
+                ctx.beginPath();
+                ctx.strokeStyle = '#00ff00';
+                ctx.lineWidth = 2;
+                // Vẽ đường nối các đốt ngón tay (có thể thêm phức tạp hơn nếu muốn)
+                const connections = [
+                    [0,1], [1,2], [2,3], [3,4], // Ngón cái
+                    [0,5], [5,6], [6,7], [7,8], // Ngón trỏ
+                    [0,9], [9,10], [10,11], [11,12], // Ngón giữa
+                    [0,13], [13,14], [14,15], [15,16], // Ngón áp út
+                    [0,17], [17,18], [18,19], [19,20] // Ngón út
+                ];
+                for (let conn of connections) {
+                    const p1 = landmarks[conn[0]];
+                    const p2 = landmarks[conn[1]];
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x * canvas.width, p1.y * canvas.height);
+                    ctx.lineTo(p2.x * canvas.width, p2.y * canvas.height);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    // Hàm xử lý kết quả từ MediaPipe
+    function onResults(results) {
+        if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+            const landmarks = results.multiHandLandmarks[0];
+            handsDetected = true;
+            
+            // Đếm số ngón tay
+            currentFingers = countFingers(landmarks);
+            fingerCountSpan.textContent = currentFingers;
+            
+            // Cập nhật khung frame (vẽ theo kích thước canvas hiện tại)
+            if (canvas.width > 0 && canvas.height > 0) {
+                frameRect = {
+                    x: canvas.width * 0.15,
+                    y: canvas.height * 0.15,
+                    w: canvas.width * 0.7,
+                    h: canvas.height * 0.7
+                };
+            }
+            
+            // Kiểm tra tay trong khung chưa
+            const inFrame = isHandInFrame(landmarks, frameRect);
+            if (inFrame) {
+                handStatusDiv.className = 'status in-frame';
+                handStatusDiv.innerHTML = '🟢 TAY TRONG KHUNG - SẴN SÀNG CHỤP!';
+                // Tự động chụp khi tay vào khung (bỏ comment nếu muốn)
+                // autoCapture();
+            } else {
+                handStatusDiv.className = 'status out-frame';
+                handStatusDiv.innerHTML = '🔴 Đưa tay vào khung xanh để chụp đẹp!';
+            }
+            
+            // Vẽ lên canvas
+            drawResults(landmarks, frameRect);
+        } else {
+            handsDetected = false;
+            fingerCountSpan.textContent = '0';
+            handStatusDiv.className = 'status out-frame';
+            handStatusDiv.innerHTML = '🔴 Không thấy tay - Đưa tay lên trước camera';
+            drawResults(null, frameRect);
+        }
+    }
+
+    // Hàm chụp ảnh
+    function capturePhoto() {
+        if (!video.videoWidth || !video.videoHeight) {
+            alert('Camera chưa sẵn sàng!');
+            return;
+        }
+        
+        // Tạo canvas tạm để chụp ảnh từ video
+        const captureCanvas = document.createElement('canvas');
+        captureCanvas.width = video.videoWidth;
+        captureCanvas.height = video.videoHeight;
+        const captureCtx = captureCanvas.getContext('2d');
+        
+        // Vẽ ảnh từ video (lưu ý: video đang bị lật ngang)
+        captureCtx.save();
+        captureCtx.scale(-1, 1);
+        captureCtx.drawImage(video, -captureCanvas.width, 0, captureCanvas.width, captureCanvas.height);
+        captureCtx.restore();
+        
+        // Nếu muốn chỉ lấy phần trong khung (crop ảnh)
+        // Tính toán vùng crop theo khung hiện tại
+        const scaleX = captureCanvas.width / canvas.width;
+        const scaleY = captureCanvas.height / canvas.height;
+        const cropX = frameRect.x * scaleX;
+        const cropY = frameRect.y * scaleY;
+        const cropW = frameRect.w * scaleX;
+        const cropH = frameRect.h * scaleY;
+        
+        // Tạo ảnh crop
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = cropW;
+        croppedCanvas.height = cropH;
+        const croppedCtx = croppedCanvas.getContext('2d');
+        croppedCtx.drawImage(captureCanvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+        
+        // Chuyển thành dataURL
+        const imageData = croppedCanvas.toDataURL('image/jpeg', 0.9);
+        
+        // Hiển thị ảnh preview
+        capturedImg.src = imageData;
+        capturedImg.style.display = 'block';
+        noImageDiv.style.display = 'none';
+        
+        // Tạo hiệu ứng nháy đèn
+        const flash = document.createElement('div');
+        flash.style.position = 'fixed';
+        flash.style.top = 0;
+        flash.style.left = 0;
+        flash.style.width = '100%';
+        flash.style.height = '100%';
+        flash.style.backgroundColor = 'white';
+        flash.style.opacity = 0.5;
+        flash.style.pointerEvents = 'none';
+        flash.style.zIndex = 9999;
+        document.body.appendChild(flash);
+        setTimeout(() => flash.remove(), 200);
+        
+        // Tải ảnh xuống (tự động)
+        const link = document.createElement('a');
+        link.download = `hand_capture_${Date.now()}.jpg`;
+        link.href = imageData;
+        link.click();
+        
+        // Thông báo
+        handStatusDiv.innerHTML = '✅ ĐÃ CHỤP ẢNH! Lưu vào thư mục tải về';
+        setTimeout(() => {
+            if (handsDetected) {
+                handStatusDiv.innerHTML = '🟢 TAY TRONG KHUNG - SẴN SÀNG CHỤP!';
+            }
+        }, 2000);
+    }
+    
+    // Tự động chụp khi tay vào khung (nếu muốn)
+    let autoCaptureEnabled = false;
+    let lastCaptureTime = 0;
+    function autoCapture() {
+        if (!autoCaptureEnabled) return;
+        const now = Date.now();
+        if (handsDetected && now - lastCaptureTime > 3000) { // Mỗi 3 giây chụp 1 lần
+            lastCaptureTime = now;
+            capturePhoto();
+        }
+    }
+    
+    // Khởi tạo camera với MediaPipe
+    function initCamera() {
+        const camera = new Camera(video, {
+            onFrame: async () => {
+                await hands.send({image: video});
+            },
+            width: 640,
+            height: 480
+        });
+        camera.start();
+        
+        // Cập nhật kích thước canvas khi video load
+        video.addEventListener('loadeddata', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            frameRect = {
+                x: canvas.width * 0.15,
+                y: canvas.height * 0.15,
+                w: canvas.width * 0.7,
+                h: canvas.height * 0.7
+            };
+        });
+    }
+    
+    // Xử lý sự kiện nút bấm
+    captureBtn.addEventListener('click', capturePhoto);
+    toggleFrameBtn.addEventListener('click', () => {
+        showFrame = !showFrame;
+        toggleFrameBtn.textContent = showFrame ? '🔲 TẮT KHUNG' : '🟩 BẬT KHUNG';
+    });
+    
+    // Gắn callback cho MediaPipe
+    hands.onResults(onResults);
+    
+    // Khởi chạy
+    initCamera();
+    
+    // Hướng dẫn thêm
+    console.log('Khởi tạo thành công! Đưa tay vào khung xanh và bấm chụp.');
+</script>
 </body>
 </html>
