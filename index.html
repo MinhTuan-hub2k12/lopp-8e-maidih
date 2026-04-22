@@ -16,7 +16,6 @@
             background-attachment: fixed;
         }
         
-        /* Glassmorphism effect */
         .glass {
             background: rgba(30, 27, 58, 0.7);
             backdrop-filter: blur(12px);
@@ -35,14 +34,12 @@
             box-shadow: 0 8px 32px rgba(88, 101, 242, 0.1);
         }
         
-        /* Sidebar */
         .sidebar-modern {
-            background: rgba(15, 13, 30, 0.9);
+            background: rgba(15, 13, 30, 0.95);
             backdrop-filter: blur(12px);
             border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
         
-        /* Channel item */
         .channel-item {
             transition: all 0.2s ease;
             border-radius: 8px;
@@ -58,7 +55,6 @@
             border-left: 3px solid #5865F2;
         }
         
-        /* Message */
         .message {
             transition: all 0.2s ease;
             border-radius: 8px;
@@ -69,7 +65,6 @@
             transform: translateX(4px);
         }
         
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -89,7 +84,6 @@
             background: rgba(88, 101, 242, 0.8);
         }
         
-        /* Input */
         .modern-input {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -103,7 +97,6 @@
             box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
         }
         
-        /* Button */
         .btn-primary {
             background: linear-gradient(135deg, #5865F2, #4752C4);
             transition: all 0.3s ease;
@@ -114,7 +107,6 @@
             box-shadow: 0 8px 20px rgba(88, 101, 242, 0.3);
         }
         
-        /* Animation */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -131,22 +123,12 @@
         }
         
         @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
         .guest-badge {
             animation: pulse 2s infinite;
-        }
-        
-        /* Modal */
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
         }
     </style>
 </head>
@@ -154,55 +136,93 @@
     <div id="app"></div>
 
     <script>
-        // ==================== DỮ LIỆU ====================
-        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-        let users = JSON.parse(localStorage.getItem('users') || '[]');
-        let messages = JSON.parse(localStorage.getItem('messages') || '[]');
-        let channels = JSON.parse(localStorage.getItem('channels') || '[]');
-        let currentChannel = JSON.parse(localStorage.getItem('currentChannel') || '"general"');
+        // ==================== DỮ LIỆU KHỞI TẠO ====================
+        let currentUser = null;
+        let users = [];
+        let messages = [];
+        let channels = [];
+        let currentChannel = 'general';
         
-        // Tạo dữ liệu mặc định
-        if (users.length === 0) {
-            users = [
-                { id: '1', username: 'cogiaochunhiem', password: '123456', role: 'teacher', avatar: '👩‍🏫', email: 'cogiao@8e.edu.vn', createdAt: new Date().toISOString() },
-                { id: '2', username: 'minh_anh', password: '123456', role: 'student', avatar: '👧', email: 'minhanh@8e.edu.vn', createdAt: new Date().toISOString() },
-                { id: '3', username: 'duc_huy', password: '123456', role: 'student', avatar: '👦', email: 'duchuy@8e.edu.vn', createdAt: new Date().toISOString() }
-            ];
-            localStorage.setItem('users', JSON.stringify(users));
-        }
-        
-        if (channels.length === 0) {
-            channels = [
-                { id: 'general', name: 'chung', icon: '#', type: 'text', description: 'Nơi trò chuyện chung của lớp 8E' },
-                { id: 'homework', name: 'bài tập', icon: '📝', type: 'text', description: 'Thảo luận bài tập và kiến thức' },
-                { id: 'announcements', name: 'thông báo', icon: '📢', type: 'text', description: 'Thông báo quan trọng từ giáo viên' },
-                { id: 'random', name: 'random', icon: '🎮', type: 'text', description: 'Giao lưu, giải trí' }
-            ];
-            localStorage.setItem('channels', JSON.stringify(channels));
-        }
-        
-        if (messages.length === 0) {
-            messages = [
-                { id: '1', username: 'cogiaochunhiem', content: '✨ Chào mừng các em đến với Lớp 8E - Nơi học tập và kết nối! ✨', channel: 'general', timestamp: new Date(Date.now() - 3600000).toISOString(), avatar: '👩‍🏫' },
-                { id: '2', username: 'cogiaochunhiem', content: '💡 Các em nhớ đăng nhập để có thể nhắn tin và tạo phòng chat nhé!', channel: 'general', timestamp: new Date(Date.now() - 3500000).toISOString(), avatar: '👩‍🏫' },
-                { id: '3', username: 'minh_anh', content: 'Chào cô và các bạn! 👋', channel: 'general', timestamp: new Date(Date.now() - 3400000).toISOString(), avatar: '👧' }
-            ];
-            localStorage.setItem('messages', JSON.stringify(messages));
-        }
-        
-        // ==================== HÀM TIỆN ÍCH ====================
-        function saveData() {
-            localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('messages', JSON.stringify(messages));
-            localStorage.setItem('channels', JSON.stringify(channels));
-            localStorage.setItem('currentChannel', JSON.stringify(currentChannel));
-            if (currentUser) {
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        // Load dữ liệu từ localStorage
+        function loadData() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser && savedUser !== 'null') {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                } catch(e) { currentUser = null; }
             } else {
-                localStorage.removeItem('currentUser');
+                currentUser = null;
+            }
+            
+            const savedUsers = localStorage.getItem('users');
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            } else {
+                users = [];
+            }
+            
+            const savedMessages = localStorage.getItem('messages');
+            if (savedMessages) {
+                messages = JSON.parse(savedMessages);
+            } else {
+                messages = [];
+            }
+            
+            const savedChannels = localStorage.getItem('channels');
+            if (savedChannels) {
+                channels = JSON.parse(savedChannels);
+            } else {
+                channels = [];
+            }
+            
+            const savedChannel = localStorage.getItem('currentChannel');
+            if (savedChannel && savedChannel !== 'null') {
+                currentChannel = savedChannel;
+            } else {
+                currentChannel = 'general';
             }
         }
         
+        // Lưu dữ liệu
+        function saveData() {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('messages', JSON.stringify(messages));
+            localStorage.setItem('channels', JSON.stringify(channels));
+            localStorage.setItem('currentChannel', currentChannel);
+        }
+        
+        // Tạo dữ liệu mặc định nếu chưa có
+        function initDefaultData() {
+            if (users.length === 0) {
+                users = [
+                    { id: '1', username: 'cogiaochunhiem', password: '123456', role: 'teacher', avatar: '👩‍🏫', email: 'cogiao@8e.edu.vn' },
+                    { id: '2', username: 'minh_anh', password: '123456', role: 'student', avatar: '👧', email: 'minhanh@8e.edu.vn' },
+                    { id: '3', username: 'duc_huy', password: '123456', role: 'student', avatar: '👦', email: 'duchuy@8e.edu.vn' }
+                ];
+            }
+            
+            if (channels.length === 0) {
+                channels = [
+                    { id: 'general', name: 'chung', icon: '#', description: 'Nơi trò chuyện chung của lớp 8E' },
+                    { id: 'homework', name: 'bài tập', icon: '📝', description: 'Thảo luận bài tập và kiến thức' },
+                    { id: 'announcements', name: 'thông báo', icon: '📢', description: 'Thông báo quan trọng từ giáo viên' },
+                    { id: 'random', name: 'random', icon: '🎮', description: 'Giao lưu, giải trí' }
+                ];
+            }
+            
+            if (messages.length === 0) {
+                messages = [
+                    { id: '1', username: 'cogiaochunhiem', content: '✨ Chào mừng các em đến với Lớp 8E! ✨', channel: 'general', timestamp: new Date(Date.now() - 3600000).toISOString() },
+                    { id: '2', username: 'cogiaochunhiem', content: '💡 Các em nhớ đăng nhập để có thể nhắn tin nhé!', channel: 'general', timestamp: new Date(Date.now() - 3500000).toISOString() },
+                    { id: '3', username: 'minh_anh', content: 'Chào cô và các bạn! 👋', channel: 'general', timestamp: new Date(Date.now() - 3400000).toISOString() }
+                ];
+            }
+            
+            saveData();
+        }
+        
+        // Format thời gian
         function formatTime(timestamp) {
             const date = new Date(timestamp);
             const now = new Date();
@@ -210,14 +230,12 @@
             if (diff < 60000) return 'vừa xong';
             if (diff < 3600000) return `${Math.floor(diff / 60000)} phút trước`;
             if (diff < 86400000) return `${Math.floor(diff / 3600000)} giờ trước`;
-            if (diff < 604800000) return `${Math.floor(diff / 86400000)} ngày trước`;
             return date.toLocaleDateString('vi-VN');
         }
         
         function getUserAvatar(username) {
             const user = users.find(u => u.username === username);
             if (user && user.avatar) return user.avatar;
-            if (username === 'cogiaochunhiem') return '👩‍🏫';
             return '👤';
         }
         
@@ -227,50 +245,25 @@
             return div.innerHTML;
         }
         
-        // ==================== MODAL ====================
-        function showModal(title, content, onConfirm) {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-50 flex items-center justify-center modal-overlay fade-in-up';
-            modal.innerHTML = `
-                <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 transform transition-all">
-                    <h3 class="text-xl font-bold mb-4">${title}</h3>
-                    <div class="mb-6">${content}</div>
-                    <div class="flex gap-3">
-                        <button class="cancel-btn flex-1 px-4 py-2 rounded-lg bg-gray-600/30 hover:bg-gray-600/50 transition">Hủy</button>
-                        <button class="confirm-btn flex-1 px-4 py-2 rounded-lg btn-primary text-white font-semibold">Xác nhận</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            modal.querySelector('.cancel-btn').onclick = () => modal.remove();
-            modal.querySelector('.confirm-btn').onclick = () => {
-                onConfirm();
-                modal.remove();
-            };
-        }
-        
-        // ==================== XỬ LÝ TIN NHẮN ====================
+        // Gửi tin nhắn
         function sendMessage() {
             if (!currentUser) {
-                showModal('Cần đăng nhập', '<p class="text-gray-300">Bạn cần đăng nhập để nhắn tin. Hãy đăng ký tài khoản miễn phí!</p>', () => {
-                    window._showRegister = false;
-                    renderApp();
-                });
-                return;
+                alert('🔐 Vui lòng đăng nhập để nhắn tin!');
+                return false;
             }
             
             const input = document.getElementById('messageInput');
+            if (!input) return false;
+            
             const content = input.value.trim();
-            if (!content) return;
+            if (!content) return false;
             
             const newMessage = {
                 id: Date.now().toString() + Math.random(),
                 username: currentUser.username,
                 content: content,
                 channel: currentChannel,
-                timestamp: new Date().toISOString(),
-                avatar: getUserAvatar(currentUser.username)
+                timestamp: new Date().toISOString()
             };
             
             messages.push(newMessage);
@@ -282,56 +275,54 @@
                 const container = document.getElementById('messagesContainer');
                 if (container) container.scrollTop = container.scrollHeight;
             }, 100);
+            
+            return true;
         }
         
+        // Xóa tin nhắn
         function deleteMessage(msgId) {
             if (!currentUser) return;
             const msg = messages.find(m => m.id === msgId);
             if (msg && (msg.username === currentUser.username || currentUser.role === 'teacher')) {
-                messages = messages.filter(m => m.id !== msgId);
-                saveData();
-                renderApp();
+                if (confirm('Xóa tin nhắn này?')) {
+                    messages = messages.filter(m => m.id !== msgId);
+                    saveData();
+                    renderApp();
+                }
             }
         }
         
-        // ==================== TẠO PHÒNG CHAT ====================
+        // Tạo phòng chat mới
         function createNewChannel() {
             if (!currentUser) {
-                showModal('Cần đăng nhập', '<p class="text-gray-300">Chỉ thành viên đã đăng nhập mới được tạo phòng chat mới!</p>', () => {
-                    window._showRegister = false;
-                    renderApp();
-                });
+                alert('🔐 Vui lòng đăng nhập để tạo phòng chat!');
                 return;
             }
             
-            const name = prompt('🏷️ Tên phòng chat (không dấu, VD: hoc_tap):', '');
+            const id = prompt('🏷️ Tên phòng (không dấu, VD: hoc_tap):', '');
+            if (!id) return;
+            
+            const name = prompt('📛 Tên hiển thị (VD: Học tập):', id);
             if (!name) return;
             
-            const displayName = prompt('📛 Tên hiển thị (VD: Học tập):', name);
-            if (!displayName) return;
-            
-            if (channels.find(c => c.id === name)) {
-                alert('Phòng chat đã tồn tại!');
+            if (channels.find(c => c.id === id)) {
+                alert('❌ Phòng chat đã tồn tại!');
                 return;
             }
             
-            const newChannel = {
-                id: name,
-                name: displayName,
+            channels.push({
+                id: id,
+                name: name,
                 icon: '💬',
-                type: 'text',
-                description: `Phòng chat ${displayName} do ${currentUser.username} tạo`,
-                createdBy: currentUser.username,
-                createdAt: new Date().toISOString()
-            };
+                description: `Phòng chat do ${currentUser.username} tạo`
+            });
             
-            channels.push(newChannel);
             saveData();
-            currentChannel = name;
+            currentChannel = id;
             renderApp();
         }
         
-        // ==================== AUTH ====================
+        // Đăng nhập
         function handleLogin(e) {
             e.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
@@ -343,10 +334,11 @@
                 saveData();
                 renderApp();
             } else {
-                alert('❌ Sai tên đăng nhập hoặc mật khẩu!');
+                alert('❌ Sai tên đăng nhập hoặc mật khẩu!\n\n📝 Tài khoản mẫu:\n👩‍🏫 cogiaochunhiem / 123456\n👧 minh_anh / 123456');
             }
         }
         
+        // Đăng ký
         function handleRegister(e) {
             e.preventDefault();
             const username = document.getElementById('regUsername').value.trim();
@@ -355,40 +347,40 @@
             const confirm = document.getElementById('regConfirmPassword').value;
             
             if (!username || !email || !password) {
-                alert('Vui lòng nhập đầy đủ thông tin!');
+                alert('❌ Vui lòng nhập đầy đủ thông tin!');
                 return;
             }
             
             if (password !== confirm) {
-                alert('Mật khẩu xác nhận không khớp!');
+                alert('❌ Mật khẩu xác nhận không khớp!');
                 return;
             }
             
             if (password.length < 4) {
-                alert('Mật khẩu phải có ít nhất 4 ký tự!');
+                alert('❌ Mật khẩu phải có ít nhất 4 ký tự!');
                 return;
             }
             
             if (users.find(u => u.username === username)) {
-                alert('Tên đăng nhập đã tồn tại!');
+                alert('❌ Tên đăng nhập đã tồn tại!');
                 return;
             }
             
+            const avatars = ['👨‍🎓', '👩‍🎓', '🧑‍🎓', '👧', '👦', '🌟', '⭐'];
             const newUser = {
                 id: Date.now().toString(),
                 username: username,
                 email: email,
                 password: password,
                 role: 'student',
-                avatar: ['👨‍🎓', '👩‍🎓', '🧑‍🎓', '👧', '👦'][Math.floor(Math.random() * 5)],
-                createdAt: new Date().toISOString()
+                avatar: avatars[Math.floor(Math.random() * avatars.length)]
             };
             
             users.push(newUser);
             saveData();
             
             alert('✅ Đăng ký thành công! Vui lòng đăng nhập.');
-            window._showRegister = false;
+            window.showRegister = false;
             renderApp();
         }
         
@@ -400,7 +392,6 @@
         
         // ==================== GIAO DIỆN ====================
         
-        // Màn hình chào mừng (tham quan)
         function GuestWelcomeScreen() {
             return `
                 <div class="min-h-screen flex items-center justify-center p-4 fade-in-up">
@@ -411,14 +402,14 @@
                         </h1>
                         <p class="text-xl text-gray-300 mb-6">Nền tảng kết nối học tập hiện đại</p>
                         <div class="glass-card rounded-2xl p-6 mb-8">
-                            <p class="text-gray-300 mb-3">✨ <strong class="text-white">Đang tham quan</strong> - Bạn có thể xem nội dung nhưng chưa thể nhắn tin</p>
-                            <p class="text-sm text-gray-400">💡 Đăng nhập hoặc đăng ký để nhắn tin và tạo phòng chat</p>
+                            <p class="text-gray-300 mb-3">✨ <strong class="text-white">Tham quan miễn phí</strong> - Xem nội dung lớp học</p>
+                            <p class="text-sm text-gray-400">💡 Đăng nhập để nhắn tin và tạo phòng chat</p>
                         </div>
-                        <div class="flex gap-4 justify-center">
-                            <button id="guestViewBtn" class="px-6 py-3 rounded-xl glass hover:border-[#5865F2] transition font-semibold">
+                        <div class="flex gap-4 justify-center flex-wrap">
+                            <button id="guestViewBtn" class="px-6 py-3 rounded-xl glass hover:border-[#5865F2] transition font-semibold cursor-pointer">
                                 👁️ Tham quan lớp học
                             </button>
-                            <button id="showLoginFromGuestBtn" class="px-6 py-3 rounded-xl btn-primary text-white font-semibold">
+                            <button id="showLoginBtn" class="px-6 py-3 rounded-xl btn-primary text-white font-semibold cursor-pointer">
                                 🔑 Đăng nhập
                             </button>
                         </div>
@@ -427,7 +418,6 @@
             `;
         }
         
-        // Màn hình đăng nhập
         function LoginScreen() {
             return `
                 <div class="min-h-screen flex items-center justify-center p-4 fade-in-up">
@@ -441,31 +431,31 @@
                         <form id="loginForm">
                             <div class="mb-4">
                                 <label class="block text-sm font-semibold text-gray-300 mb-2">Tên đăng nhập</label>
-                                <input type="text" id="loginUsername" class="modern-input w-full rounded-xl p-3 text-white" placeholder="cogiaochunhiem / minh_anh" autocomplete="off">
+                                <input type="text" id="loginUsername" class="modern-input w-full rounded-xl p-3 text-white" placeholder="cogiaochunhiem" autocomplete="off">
                             </div>
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-300 mb-2">Mật khẩu</label>
                                 <input type="password" id="loginPassword" class="modern-input w-full rounded-xl p-3 text-white" placeholder="••••••">
                             </div>
-                            <button type="submit" class="btn-primary w-full py-3 rounded-xl text-white font-semibold">Đăng nhập</button>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-xl text-white font-semibold cursor-pointer">Đăng nhập</button>
                         </form>
                         
                         <div class="text-center mt-6">
                             <span class="text-gray-400">Chưa có tài khoản? </span>
-                            <button id="showRegisterBtn" class="text-[#5865F2] hover:underline font-semibold">Đăng ký ngay</button>
+                            <button id="showRegisterBtn" class="text-[#5865F2] hover:underline font-semibold cursor-pointer">Đăng ký ngay</button>
                         </div>
                         
                         <div class="mt-6 p-4 glass rounded-xl text-sm">
                             <p class="font-semibold text-gray-300 mb-2">📝 Tài khoản mẫu:</p>
                             <p class="text-gray-400">👩‍🏫 Giáo viên: <strong class="text-white">cogiaochunhiem</strong> / 123456</p>
                             <p class="text-gray-400">👧 Học sinh: <strong class="text-white">minh_anh</strong> / 123456</p>
+                            <p class="text-gray-400">👦 Học sinh: <strong class="text-white">duc_huy</strong> / 123456</p>
                         </div>
                     </div>
                 </div>
             `;
         }
         
-        // Màn hình đăng ký
         function RegisterScreen() {
             return `
                 <div class="min-h-screen flex items-center justify-center p-4 fade-in-up">
@@ -493,19 +483,18 @@
                                 <label class="block text-sm font-semibold text-gray-300 mb-2">Xác nhận mật khẩu</label>
                                 <input type="password" id="regConfirmPassword" class="modern-input w-full rounded-xl p-3 text-white" placeholder="••••••">
                             </div>
-                            <button type="submit" class="btn-primary w-full py-3 rounded-xl text-white font-semibold">Đăng ký</button>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-xl text-white font-semibold cursor-pointer">Đăng ký</button>
                         </form>
                         
                         <div class="text-center mt-6">
                             <span class="text-gray-400">Đã có tài khoản? </span>
-                            <button id="showLoginBtn" class="text-[#5865F2] hover:underline font-semibold">Đăng nhập</button>
+                            <button id="showLoginBtn" class="text-[#5865F2] hover:underline font-semibold cursor-pointer">Đăng nhập</button>
                         </div>
                     </div>
                 </div>
             `;
         }
         
-        // Giao diện chat chính (hiện đại)
         function ChatScreen() {
             const channelMessages = messages.filter(m => m.channel === currentChannel);
             const currentChannelInfo = channels.find(c => c.id === currentChannel);
@@ -514,7 +503,6 @@
             
             return `
                 <div class="flex h-screen">
-                    <!-- Sidebar -->
                     <div class="w-72 sidebar-modern flex flex-col">
                         <div class="p-5 border-b border-white/5">
                             <div class="flex items-center justify-between">
@@ -522,7 +510,7 @@
                                     <h1 class="text-xl font-bold bg-gradient-to-r from-[#5865F2] to-[#EB459E] bg-clip-text text-transparent">Lớp 8E</h1>
                                     <p class="text-xs text-gray-400 mt-1">Học tập & Kết nối</p>
                                 </div>
-                                ${!isGuest ? `<div class="text-2xl">${currentUser.avatar}</div>` : '<div class="guest-badge text-2xl">👁️</div>'}
+                                ${!isGuest ? `<div class="text-3xl">${currentUser.avatar}</div>` : '<div class="guest-badge text-2xl">👁️</div>'}
                             </div>
                             
                             ${!isGuest ? `
@@ -536,7 +524,7 @@
                             ` : `
                                 <div class="mt-3 p-2 glass rounded-lg text-center">
                                     <p class="text-xs text-gray-400">👁️ Đang tham quan</p>
-                                    <button id="guestLoginBtn" class="text-xs text-[#5865F2] hover:underline mt-1">Đăng nhập để nhắn tin →</button>
+                                    <button id="guestLoginBtn" class="text-xs text-[#5865F2] hover:underline mt-1 cursor-pointer">Đăng nhập để nhắn tin →</button>
                                 </div>
                             `}
                         </div>
@@ -545,7 +533,7 @@
                             <div class="flex items-center justify-between mb-3 px-2">
                                 <div class="text-xs uppercase font-semibold text-gray-400">Kênh văn bản</div>
                                 ${!isGuest ? `
-                                    <button id="createChannelBtn" class="text-gray-400 hover:text-white transition text-lg">+</button>
+                                    <button id="createChannelBtn" class="text-gray-400 hover:text-white transition text-xl cursor-pointer">+</button>
                                 ` : `
                                     <span class="text-gray-500 text-xs">🔒</span>
                                 `}
@@ -562,20 +550,18 @@
                         
                         <div class="p-3 border-t border-white/5">
                             ${!isGuest ? `
-                                <button id="logoutBtn" class="w-full text-left text-gray-400 hover:text-white text-sm py-2 px-2 rounded-lg hover:bg-white/5 transition flex items-center gap-2">
+                                <button id="logoutBtn" class="w-full text-left text-gray-400 hover:text-white text-sm py-2 px-2 rounded-lg hover:bg-white/5 transition flex items-center gap-2 cursor-pointer">
                                     <span>🚪</span> Đăng xuất
                                 </button>
                             ` : `
-                                <button id="guestToLoginBtn" class="w-full text-left text-[#5865F2] hover:text-white text-sm py-2 px-2 rounded-lg hover:bg-white/5 transition flex items-center gap-2">
+                                <button id="guestToLoginBtn" class="w-full text-left text-[#5865F2] hover:text-white text-sm py-2 px-2 rounded-lg hover:bg-white/5 transition flex items-center gap-2 cursor-pointer">
                                     <span>🔑</span> Đăng nhập
                                 </button>
                             `}
                         </div>
                     </div>
                     
-                    <!-- Main chat area -->
                     <div class="flex-1 flex flex-col">
-                        <!-- Header -->
                         <div class="h-14 border-b border-white/5 flex items-center px-6 glass">
                             <span class="text-2xl mr-3">${currentChannelInfo?.icon || '#'}</span>
                             <div>
@@ -584,7 +570,6 @@
                             </div>
                         </div>
                         
-                        <!-- Messages -->
                         <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-2">
                             ${channelMessages.length === 0 ? `
                                 <div class="text-center text-gray-500 py-20">
@@ -592,16 +577,16 @@
                                     <p>Chưa có tin nhắn nào</p>
                                     <p class="text-sm mt-2">Hãy là người đầu tiên nhắn tin!</p>
                                 </div>
-                            ` : channelMessages.map(msg => `
-                                <div class="message p-3 rounded-lg transition group" data-msg-id="${msg.id}">
+                            ` : channelMessages.slice().reverse().map(msg => `
+                                <div class="message p-3 rounded-lg transition group">
                                     <div class="flex gap-3">
                                         <div class="text-3xl">${getUserAvatar(msg.username)}</div>
                                         <div class="flex-1">
                                             <div class="flex items-baseline gap-2 flex-wrap">
-                                                <span class="font-semibold hover:underline cursor-pointer">${msg.username}</span>
+                                                <span class="font-semibold">${msg.username}</span>
                                                 <span class="text-xs text-gray-400">${formatTime(msg.timestamp)}</span>
                                                 ${msg.username === currentUser?.username || isTeacher ? 
-                                                    `<button class="delete-msg opacity-0 group-hover:opacity-100 text-red-400 text-xs ml-2 transition" data-msg-id="${msg.id}">🗑️ Xóa</button>` 
+                                                    `<button class="delete-msg opacity-0 group-hover:opacity-100 text-red-400 text-xs ml-2 transition cursor-pointer" data-msg-id="${msg.id}">🗑️ Xóa</button>` 
                                                     : ''}
                                                 ${msg.username === 'cogiaochunhiem' ? '<span class="text-xs bg-[#5865F2] px-1.5 py-0.5 rounded-full">GV</span>' : ''}
                                             </div>
@@ -609,125 +594,120 @@
                                         </div>
                                     </div>
                                 </div>
-                            `).reverse().join('')}
+                            `).join('')}
                         </div>
                         
-                        <!-- Input area -->
                         <div class="p-4 border-t border-white/5">
                             <div class="glass rounded-xl flex items-center">
                                 <input type="text" id="messageInput" class="flex-1 bg-transparent text-white p-3 outline-none rounded-xl" 
-                                    placeholder="${isGuest ? '🔒 Đăng nhập để nhắn tin...' : (isTeacher ? 'Nhập tin nhắn... (Giáo viên có thể xóa tin nhắn)' : 'Nhập tin nhắn...')}" 
+                                    placeholder="${isGuest ? '🔒 Đăng nhập để nhắn tin...' : 'Nhập tin nhắn...'}" 
                                     ${isGuest ? 'disabled' : ''} autocomplete="off">
-                                <button id="sendBtn" class="btn-primary text-white px-5 py-2 m-1 rounded-xl transition font-semibold" ${isGuest ? 'disabled' : ''}>
+                                <button id="sendBtn" class="btn-primary text-white px-5 py-2 m-1 rounded-xl transition font-semibold cursor-pointer" ${isGuest ? 'disabled' : ''}>
                                     Gửi
                                 </button>
                             </div>
-                            ${isGuest ? `
-                                <div class="text-center mt-3">
-                                    <button id="guestLoginBottomBtn" class="text-sm text-[#5865F2] hover:underline">🔑 Đăng nhập để tham gia trò chuyện</button>
-                                </div>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
             `;
         }
         
-        // ==================== RENDER ====================
+        // ==================== RENDER CHÍNH ====================
+        let currentView = 'welcome'; // welcome, login, register, guest, chat
+        
         function renderApp() {
+            loadData();
+            
             const app = document.getElementById('app');
             let html = '';
             
-            // Kiểm tra chế độ tham quan
-            const isGuestMode = window._guestMode === true;
-            
-            if (!currentUser && !isGuestMode) {
-                const showRegister = window._showRegister || false;
-                html = showRegister ? RegisterScreen() : LoginScreen();
-            } else if (!currentUser && isGuestMode) {
+            if (currentUser) {
                 html = ChatScreen();
-            } else if (currentUser) {
+                currentView = 'chat';
+            } else if (currentView === 'login') {
+                html = LoginScreen();
+            } else if (currentView === 'register') {
+                html = RegisterScreen();
+            } else if (currentView === 'guest') {
                 html = ChatScreen();
             } else {
                 html = GuestWelcomeScreen();
+                currentView = 'welcome';
             }
             
             app.innerHTML = html;
-            
-            // Gắn sự kiện
-            if (!currentUser && !isGuestMode) {
-                const loginForm = document.getElementById('loginForm');
-                if (loginForm) loginForm.addEventListener('submit', handleLogin);
-                
-                const registerForm = document.getElementById('registerForm');
-                if (registerForm) registerForm.addEventListener('submit', handleRegister);
-                
-                const showRegisterBtn = document.getElementById('showRegisterBtn');
-                if (showRegisterBtn) showRegisterBtn.onclick = () => { window._showRegister = true; renderApp(); };
-                
-                const showLoginBtn = document.getElementById('showLoginBtn');
-                if (showLoginBtn) showLoginBtn.onclick = () => { window._showRegister = false; renderApp(); };
-            } 
-            else if (!currentUser && isGuestMode) {
-                // Guest đang xem chat
-                const guestLoginBtn = document.getElementById('guestLoginBtn');
-                const guestLoginBottomBtn = document.getElementById('guestLoginBottomBtn');
-                const guestToLoginBtn = document.getElementById('guestToLoginBtn');
-                
-                const goToLogin = () => { window._guestMode = false; window._showRegister = false; renderApp(); };
-                if (guestLoginBtn) guestLoginBtn.onclick = goToLogin;
-                if (guestLoginBottomBtn) guestLoginBottomBtn.onclick = goToLogin;
-                if (guestToLoginBtn) guestToLoginBtn.onclick = goToLogin;
-                
-                // Chuyển kênh (guest vẫn xem được)
+            attachEvents();
+        }
+        
+        function attachEvents() {
+            if (currentView === 'welcome') {
+                const guestBtn = document.getElementById('guestViewBtn');
+                const loginBtn = document.getElementById('showLoginBtn');
+                if (guestBtn) guestBtn.onclick = () => { currentView = 'guest'; renderApp(); };
+                if (loginBtn) loginBtn.onclick = () => { currentView = 'login'; renderApp(); };
+            }
+            else if (currentView === 'login') {
+                const form = document.getElementById('loginForm');
+                if (form) form.onsubmit = handleLogin;
+                const registerBtn = document.getElementById('showRegisterBtn');
+                if (registerBtn) registerBtn.onclick = () => { currentView = 'register'; renderApp(); };
+            }
+            else if (currentView === 'register') {
+                const form = document.getElementById('registerForm');
+                if (form) form.onsubmit = handleRegister;
+                const loginBtn = document.getElementById('showLoginBtn');
+                if (loginBtn) loginBtn.onclick = () => { currentView = 'login'; renderApp(); };
+            }
+            else if (currentView === 'guest' || currentView === 'chat') {
+                // Chuyển kênh
                 document.querySelectorAll('.channel-item').forEach(el => {
                     el.onclick = () => {
                         const channel = el.dataset.channel;
-                        if (channel) { currentChannel = channel; saveData(); renderApp(); }
+                        if (channel) {
+                            currentChannel = channel;
+                            saveData();
+                            renderApp();
+                        }
                     };
                 });
-            }
-            else if (currentUser) {
-                // User đã đăng nhập
-                const sendBtn = document.getElementById('sendBtn');
-                const messageInput = document.getElementById('messageInput');
-                if (sendBtn) sendBtn.onclick = sendMessage;
-                if (messageInput) messageInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
                 
+                // Nút đăng nhập trong guest mode
+                const guestLoginBtn = document.getElementById('guestLoginBtn');
+                const guestToLoginBtn = document.getElementById('guestToLoginBtn');
+                if (guestLoginBtn) guestLoginBtn.onclick = () => { currentView = 'login'; renderApp(); };
+                if (guestToLoginBtn) guestToLoginBtn.onclick = () => { currentView = 'login'; renderApp(); };
+                
+                // Nút đăng xuất
                 const logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) logoutBtn.onclick = logout;
                 
-                const createChannelBtn = document.getElementById('createChannelBtn');
-                if (createChannelBtn) createChannelBtn.onclick = createNewChannel;
+                // Tạo phòng
+                const createBtn = document.getElementById('createChannelBtn');
+                if (createBtn) createBtn.onclick = createNewChannel;
                 
-                document.querySelectorAll('.channel-item').forEach(el => {
-                    el.onclick = () => {
-                        const channel = el.dataset.channel;
-                        if (channel) { currentChannel = channel; saveData(); renderApp(); }
-                    };
-                });
+                // Gửi tin nhắn
+                const sendBtn = document.getElementById('sendBtn');
+                const msgInput = document.getElementById('messageInput');
+                if (sendBtn) sendBtn.onclick = sendMessage;
+                if (msgInput) msgInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
                 
+                // Xóa tin nhắn
                 document.querySelectorAll('.delete-msg').forEach(btn => {
                     btn.onclick = (e) => {
                         e.stopPropagation();
-                        const msgId = btn.dataset.msgId;
-                        if (confirm('Xóa tin nhắn này?')) deleteMessage(msgId);
+                        deleteMessage(btn.dataset.msgId);
                     };
                 });
                 
+                // Auto scroll
                 const container = document.getElementById('messagesContainer');
                 if (container) container.scrollTop = container.scrollHeight;
             }
-            else {
-                // Màn hình chào mừng
-                const guestViewBtn = document.getElementById('guestViewBtn');
-                const showLoginFromGuestBtn = document.getElementById('showLoginFromGuestBtn');
-                
-                if (guestViewBtn) guestViewBtn.onclick = () => { window._guestMode = true; renderApp(); };
-                if (showLoginFromGuestBtn) showLoginFromGuestBtn.onclick = () => { window._guestMode = false; window._showRegister = false; renderApp(); };
-            }
         }
         
+        // Khởi động
+        loadData();
+        initDefaultData();
         renderApp();
     </script>
 </body>
