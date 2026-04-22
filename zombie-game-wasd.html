@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🧟 ZOMBIE SHOOTER - Điều khiển WASD + Chuột ngắm bắn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f1e, #0c1325);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', 'VT323', monospace;
+            overflow: hidden;
+        }
+
+        .game-container {
+            position: relative;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 16px;
+            cursor: crosshair;
+            box-shadow: 0 0 0 3px rgba(255,0,0,0.3), 0 0 0 6px rgba(0,0,0,0.5);
+        }
+
+        .ui-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+            z-index: 10;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .score-box, .health-box, .kill-box, .controls-box {
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-family: monospace;
+        }
+
+        .score-box span, .health-box span, .kill-box span {
+            font-size: 1.4rem;
+            margin-right: 6px;
+        }
+
+        .score-box span { color: #ff4757; }
+        .health-box span { color: #ff6b81; }
+        .kill-box span { color: #2ed573; }
+        .controls-box { font-size: 0.75rem; color: #aaa; }
+
+        .restart-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff4757;
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: inherit;
+            z-index: 20;
+            transition: transform 0.1s, background 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .restart-btn:hover {
+            background: #ff6b81;
+            transform: scale(1.02);
+        }
+
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(12px);
+            padding: 30px 50px;
+            border-radius: 30px;
+            text-align: center;
+            color: white;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            border: 2px solid #ff4757;
+            min-width: 320px;
+        }
+
+        .game-over h1 {
+            font-size: 2.5rem;
+            color: #ff4757;
+        }
+
+        .game-over button {
+            background: #2ed573;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ui-panel">
+    <div class="score-box"><span>💀</span> ĐIỂM: <span id="scoreValue">0</span></div>
+    <div class="kill-box"><span>🧟</span> GIẾT: <span id="killValue">0</span></div>
+    <div class="health-box"><span>❤️</span> MÁU: <span id="healthValue">100</span></div>
+    <div class="controls-box">🎮 WASD: DI CHUYỂN | 🖱️ CHUỘT: NGẮM & BẮN</div>
+</div>
+<button class="restart-btn" id="restartBtn">🔄 CHƠI LẠI</button>
+
+<div class="game-over" id="gameOverPanel">
+    <h1>💀 GAME OVER 💀</h1>
+    <p>Bạn đã bị zombie ăn thịt!</p>
+    <p>Điểm số: <strong id="finalScore">0</strong></p>
+    <p>Số zombie đã giết: <strong id="finalKills">0</strong></p>
+    <button id="gameOverRestartBtn">CHƠI LẠI</button>
+</div>
+
+<canvas id="gameCanvas" width="1000" height="700"></canvas>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const WIDTH = 1000;
+    const HEIGHT = 700;
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+
+    // === NHÂN VẬT ===
+    let player = {
+        x: WIDTH/2,
+        y: HEIGHT/2,
+        radius: 18,
+        health: 100,
+        maxHealth: 100,
+        speed: 4.5
+    };
+
+    // === ĐIỀU KHIỂN BÀN PHÍM ===
+    const keys = {
+        w: false, a: false, s: false, d: false
+    };
+
+    // === ĐẠN ===
+    let bullets = [];
+    const BULLET_RADIUS = 5;
+    const BULLET_SPEED = 11;
+    let shootCooldown = 0;
+    let shootDelay = 6; // frames giữa các phát bắn
+    let mouseShooting = false; // bắn liên tục khi giữ chuột
+
+    // === ZOMBIE ===
+    let zombies = [];
+    let zombieSpawnTimer = 0;
+    let zombieSpawnDelay = 45;
+    let kills = 0;
+    let score = 0;
+
+    // === HIỆU ỨNG ===
+    let bloodEffects = [];
+    let headshotEffects = [];
+
+    // === GAME STATE ===
+    let gameRunning = true;
+    let mouseAngle = 0; // góc nhìn súng
+    let mouseX = player.x, mouseY = player.y;
+
+    // === HÀM SINH ZOMBIE ===
+    function spawnZombie() {
+        let side = Math.floor(Math.random() * 4);
+        let x, y;
+        const radius = 24;
+        
+        if (side === 0) { x = -radius; y = Math.random() * HEIGHT; }
+        else if (side === 1) { x = WIDTH + radius; y = Math.random() * HEIGHT; }
+        else if (side === 2) { x = Math.random() * WIDTH; y = -radius; }
+        else { x = Math.random() * WIDTH; y = HEIGHT + radius; }
+        
+        x = Math.max(-radius, Math.min(WIDTH + radius, x));
+        y = Math.max(-radius, Math.min(HEIGHT + radius, y));
+        
+        const baseSpeed = 1.5;
+        const speedBonus = Math.min(2.0, Math.floor(score / 700) * 0.15);
+        const speed = baseSpeed + speedBonus;
+        
+        zombies.push({
+            x: x, y: y, radius: radius,
+            speed: speed,
+            health: 2,
+            color: `hsl(${Math.random() * 20 + 80}, 70%, 35%)`,
+            type: 'normal'
+        });
+    }
+
+    // === BẮN ĐẠN ===
+    function shoot(angle) {
+        if (!gameRunning) return;
+        const vx = Math.cos(angle) * BULLET_SPEED;
+        const vy = Math.sin(angle) * BULLET_SPEED;
+        
+        bullets.push({
+            x: player.x,
+            y: player.y,
+            vx: vx,
+            vy: vy,
+            radius: BULLET_RADIUS,
+            life: true
+        });
+    }
+
+    // === CẬP NHẬT GAME ===
+    function update() {
+        if (!gameRunning) return;
+        
+        // 1. DI CHUYỂN WASD
+        let moveX = 0, moveY = 0;
+        if (keys.w) moveY -= 1;
+        if (keys.s) moveY += 1;
+        if (keys.a) moveX -= 1;
+        if (keys.d) moveX += 1;
+        
+        if (moveX !== 0 || moveY !== 0) {
+            const len = Math.hypot(moveX, moveY);
+            moveX /= len;
+            moveY /= len;
+            player.x += moveX * player.speed;
+            player.y += moveY * player.speed;
+        }
+        
+        // Giới hạn trong canvas
+        player.x = Math.min(Math.max(player.x, player.radius), WIDTH - player.radius);
+        player.y = Math.min(Math.max(player.y, player.radius), HEIGHT - player.radius);
+        
+        // 2. BẮN (cooldown + giữ chuột)
+        if (shootCooldown > 0) shootCooldown--;
+        
+        if (mouseShooting && gameRunning && shootCooldown === 0) {
+            shoot(mouseAngle);
+            shootCooldown = shootDelay;
+            if (navigator.vibrate) navigator.vibrate(8);
+        }
+        
+        // 3. Cập nhật đạn
+        for (let i = bullets.length-1; i >= 0; i--) {
+            const b = bullets[i];
+            b.x += b.vx;
+            b.y += b.vy;
+            
+            if (b.x < -50 || b.x > WIDTH+50 || b.y < -50 || b.y > HEIGHT+50) {
+                bullets.splice(i,1);
+                continue;
+            }
+            
+            let hit = false;
+            for (let j = zombies.length-1; j >= 0; j--) {
+                const z = zombies[j];
+                const dist = Math.hypot(b.x - z.x, b.y - z.y);
+                if (dist < z.radius + b.radius) {
+                    hit = true;
+                    z.health -= 1;
+                    
+                    if (z.health <= 0) {
+                        const isHeadshot = Math.random() < 0.15;
+                        if (isHeadshot) {
+                            headshotEffects.push({ x: z.x, y: z.y, life: 8 });
+                            score += 15;
+                        } else {
+                            bloodEffects.push({ x: z.x, y: z.y, life: 8 });
+                            score += 10;
+                        }
+                        kills++;
+                        zombies.splice(j,1);
+                        updateUI();
+                    } else {
+                        bloodEffects.push({ x: z.x, y: z.y, life: 4 });
+                    }
+                    break;
+                }
+            }
+            if (hit) bullets.splice(i,1);
+        }
+        
+        // 4. Cập nhật zombie
+        for (let i = 0; i < zombies.length; i++) {
+            const z = zombies[i];
+            const dx = player.x - z.x;
+            const dy = player.y - z.y;
+            const len = Math.hypot(dx, dy);
+            if (len > 0.01) {
+                const move = Math.min(z.speed, len - z.radius - player.radius);
+                z.x += (dx / len) * move;
+                z.y += (dy / len) * move;
+            }
+            
+            const distToPlayer = Math.hypot(z.x - player.x, z.y - player.y);
+            if (distToPlayer < z.radius + player.radius) {
+                player.health -= 10;
+                updateUI();
+                const angle = Math.atan2(z.y - player.y, z.x - player.x);
+                z.x += Math.cos(angle) * 30;
+                z.y += Math.sin(angle) * 30;
+                bloodEffects.push({ x: player.x, y: player.y, life: 6 });
+                
+                if (player.health <= 0) {
+                    gameRunning = false;
+                    document.getElementById('finalScore').innerText = Math.floor(score);
+                    document.getElementById('finalKills').innerText = kills;
+                    document.getElementById('gameOverPanel').style.display = 'flex';
+                }
+            }
+        }
+        
+        // 5. Sinh zombie
+        if (zombieSpawnTimer <= 0) {
+            let dynamicDelay = Math.max(20, zombieSpawnDelay - Math.floor(score / 500));
+            if (zombies.length < 15) {
+                spawnZombie();
+                if (score > 600 && zombies.length < 20) spawnZombie();
+            }
+            zombieSpawnTimer = dynamicDelay;
+        } else {
+            zombieSpawnTimer--;
+        }
+        
+        // 6. Hiệu ứng
+        for (let i=bloodEffects.length-1; i>=0; i--) {
+            bloodEffects[i].life--;
+            if (bloodEffects[i].life <= 0) bloodEffects.splice(i,1);
+        }
+        for (let i=headshotEffects.length-1; i>=0; i--) {
+            headshotEffects[i].life--;
+            if (headshotEffects[i].life <= 0) headshotEffects.splice(i,1);
+        }
+        
+        if (bullets.length > 180) bullets = bullets.slice(-150);
+    }
+    
+    function updateUI() {
+        document.getElementById('scoreValue').innerText = Math.floor(score);
+        document.getElementById('killValue').innerText = kills;
+        document.getElementById('healthValue').innerText = Math.max(0, player.health);
+    }
+    
+    // === VẼ ===
+    function draw() {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        
+        // Nền
+        const grad = ctx.createLinearGradient(0, 0, WIDTH, HEIGHT);
+        grad.addColorStop(0, '#1a2a32');
+        grad.addColorStop(1, '#0e1a1f');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        
+        // Lưới
+        ctx.strokeStyle = 'rgba(80,120,80,0.25)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < WIDTH; i += 60) {
+            ctx.beginPath();
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, HEIGHT);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, i % HEIGHT);
+            ctx.lineTo(WIDTH, i % HEIGHT);
+            ctx.stroke();
+        }
+        
+        // Zombie
+        for (const z of zombies) {
+            ctx.beginPath();
+            ctx.arc(z.x, z.y, z.radius-2, 0, Math.PI*2);
+            ctx.fillStyle = z.color || '#2f4f2f';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(z.x-6, z.y-5, 5, 0, Math.PI*2);
+            ctx.fillStyle = '#111';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(z.x+6, z.y-5, 5, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#c0392b';
+            ctx.beginPath();
+            ctx.arc(z.x-6, z.y-6, 2, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(z.x+6, z.y-6, 2, 0, Math.PI*2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(z.x, z.y+5, 9, 0.05, Math.PI - 0.05);
+            ctx.strokeStyle = '#5a2e1a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            for (let t = -5; t <= 5; t+=4) {
+                ctx.fillStyle = '#f1c40f';
+                ctx.fillRect(z.x+t-2, z.y+4, 3, 6);
+            }
+            
+            const hpPercent = z.health / 2;
+            ctx.fillStyle = '#aa2e1e';
+            ctx.fillRect(z.x-18, z.y-22, 36, 5);
+            ctx.fillStyle = '#27ae60';
+            ctx.fillRect(z.x-18, z.y-22, 36 * hpPercent, 4);
+        }
+        
+        // Đạn
+        for (const b of bullets) {
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 4, 0, Math.PI*2);
+            ctx.fillStyle = '#ffd966';
+            ctx.shadowBlur = 6;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 2, 0, Math.PI*2);
+            ctx.fillStyle = 'orange';
+            ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+        
+        // Hiệu ứng máu
+        for (const b of bloodEffects) {
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 10, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(180, 30, 20, ${b.life / 8})`;
+            ctx.fill();
+        }
+        for (const h of headshotEffects) {
+            ctx.beginPath();
+            ctx.arc(h.x, h.y, 18, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(255, 100, 0, ${h.life / 8})`;
+            ctx.fill();
+            ctx.fillStyle = `rgba(255, 255, 150, ${h.life / 6})`;
+            ctx.font = "bold 20px monospace";
+            ctx.fillText("💥", h.x-12, h.y-10);
+        }
+        
+        // Người chơi
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2);
+        ctx.fillStyle = '#4a6a8f';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.radius-4, 0, Math.PI*2);
+        ctx.fillStyle = '#3a5a7f';
+        ctx.fill();
+        
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(player.x-6, player.y-5, 4, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(player.x+6, player.y-5, 4, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#0f1a2f';
+        ctx.beginPath();
+        ctx.arc(player.x-6, player.y-6, 2, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(player.x+6, player.y-6, 2, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Mũ
+        ctx.fillStyle = '#2c3e50';
+        ctx.fillRect(player.x-16, player.y-18, 32, 10);
+        
+        // Súng (xoay theo chuột)
+        const gunX = player.x + Math.cos(mouseAngle) * 20;
+        const gunY = player.y + Math.sin(mouseAngle) * 20;
+        ctx.beginPath();
+        ctx.moveTo(player.x, player.y);
+        ctx.lineTo(gunX, gunY);
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = '#b87333';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(gunX, gunY, 7, 0, Math.PI*2);
+        ctx.fillStyle = '#8b5a2b';
+        ctx.fill();
+        
+        // Thanh máu
+        const healthPercent = player.health / player.maxHealth;
+        ctx.fillStyle = '#330000';
+        ctx.fillRect(player.x-28, player.y-30, 56, 8);
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(player.x-28, player.y-30, 56 * healthPercent, 7);
+        
+        // Vòng tròn ngắm
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 12, 0, Math.PI*2);
+        ctx.strokeStyle = '#ff3333';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(mouseX-18, mouseY);
+        ctx.lineTo(mouseX-8, mouseY);
+        ctx.moveTo(mouseX+8, mouseY);
+        ctx.lineTo(mouseX+18, mouseY);
+        ctx.moveTo(mouseX, mouseY-18);
+        ctx.lineTo(mouseX, mouseY-8);
+        ctx.moveTo(mouseX, mouseY+8);
+        ctx.lineTo(mouseX, mouseY+18);
+        ctx.stroke();
+    }
+    
+    // === GAME LOOP ===
+    function gameLoop() {
+        update();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+    
+    // === RESET ===
+    function resetGame() {
+        gameRunning = true;
+        player.health = player.maxHealth;
+        player.x = WIDTH/2;
+        player.y = HEIGHT/2;
+        bullets = [];
+        zombies = [];
+        bloodEffects = [];
+        headshotEffects = [];
+        kills = 0;
+        score = 0;
+        shootCooldown = 0;
+        zombieSpawnTimer = 12;
+        updateUI();
+        document.getElementById('gameOverPanel').style.display = 'none';
+        for(let i=0;i<3;i++) spawnZombie();
+    }
+    
+    // === SỰ KIỆN ===
+    function onMouseMove(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        let canvasX = (e.clientX - rect.left) * scaleX;
+        let canvasY = (e.clientY - rect.top) * scaleY;
+        canvasX = Math.min(Math.max(canvasX, 0), WIDTH);
+        canvasY = Math.min(Math.max(canvasY, 0), HEIGHT);
+        mouseX = canvasX;
+        mouseY = canvasY;
+        mouseAngle = Math.atan2(mouseY - player.y, mouseX - player.x);
+    }
+    
+    function onMouseDown(e) {
+        e.preventDefault();
+        if (e.button === 0) {
+            mouseShooting = true;
+        }
+    }
+    
+    function onMouseUp(e) {
+        if (e.button === 0) {
+            mouseShooting = false;
+        }
+    }
+    
+    function onKeyDown(e) {
+        const key = e.key.toLowerCase();
+        if (key === 'w') keys.w = true;
+        if (key === 'a') keys.a = true;
+        if (key === 's') keys.s = true;
+        if (key === 'd') keys.d = true;
+        // Ngăn cuộn trang
+        if (['w','a','s','d'].includes(key)) e.preventDefault();
+    }
+    
+    function onKeyUp(e) {
+        const key = e.key.toLowerCase();
+        if (key === 'w') keys.w = false;
+        if (key === 'a') keys.a = false;
+        if (key === 's') keys.s = false;
+        if (key === 'd') keys.d = false;
+    }
+    
+    function init() {
+        resetGame();
+        canvas.addEventListener('mousemove', onMouseMove);
+        canvas.addEventListener('mousedown', onMouseDown);
+        canvas.addEventListener('mouseup', onMouseUp);
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keyup', onKeyUp);
+        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.getElementById('restartBtn').addEventListener('click', () => resetGame());
+        document.getElementById('gameOverRestartBtn').addEventListener('click', () => resetGame());
+        gameLoop();
+    }
+    
+    init();
+</script>
+</body>
+</html>
