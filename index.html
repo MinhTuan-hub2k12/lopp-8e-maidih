@@ -2,408 +2,430 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Góc nhẹ nhàng | Thiên nhiên & Tối giản</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>✨ 3D COSMIC ODYSSEY | Hiệu ứng đẹp nhất</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none; /* tránh bôi đen vô tình, vẫn có thể copy nếu cần */
-        }
-
         body {
-            min-height: 100vh;
-            background: linear-gradient(145deg, #d4e0e6 0%, #b3cdd1 100%);
-            font-family: 'Segoe UI', 'Quicksand', system-ui, -apple-system, 'Montserrat', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            transition: background 0.3s ease;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
-
-        /* khung chính như tờ giấy mờ */
-        .card {
-            max-width: 700px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(14px);
-            border-radius: 2.5rem;
-            padding: 2rem 1.8rem 2.5rem;
-            box-shadow: 0 25px 45px rgba(0, 20, 10, 0.2), inset 0 1px 1px rgba(255,255,255,0.5);
-            border: 1px solid rgba(255,255,240,0.6);
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        /* tiêu đề + icon nhẹ */
-        .greeting {
-            font-size: 2rem;
-            font-weight: 500;
-            color: #1e3c2c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.3px;
-        }
-
-        .greeting span {
-            background: rgba(255,245,200,0.5);
-            padding: 0.2rem 1rem;
-            border-radius: 60px;
-            backdrop-filter: blur(4px);
-            font-size: 1.4rem;
-        }
-
-        /* đồng hồ nổi bật */
-        .clock-panel {
-            background: rgba(30, 40, 30, 0.25);
-            border-radius: 3rem;
-            padding: 1rem 1rem;
-            margin-bottom: 1.8rem;
-            backdrop-filter: blur(4px);
-        }
-
-        .time {
-            font-size: 4rem;
-            font-weight: 500;
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 4px;
-            color: #1c2f1f;
-            text-shadow: 0 2px 5px rgba(255,245,200,0.8);
-        }
-
-        .date {
-            font-size: 1.2rem;
-            margin-top: 8px;
-            color: #2b4b2b;
-            font-weight: 500;
-        }
-
-        /* câu quote */
-        .quote-box {
-            background: rgba(245, 250, 240, 0.5);
-            border-radius: 2rem;
-            padding: 1.2rem;
-            margin: 1.8rem 0;
-            font-style: normal;
-            font-weight: 450;
-            border-left: 5px solid #5f8b6f;
-            backdrop-filter: blur(8px);
-        }
-        .quote-text {
-            font-size: 1.2rem;
-            line-height: 1.4;
-            color: #1f3b2c;
-        }
-        .quote-author {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            opacity: 0.75;
-            color: #2b4b2b;
-        }
-
-        /* nút cảm xúc + điều khiển nhạc */
-        .mood-bar {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1.8rem 0 1.2rem;
-            flex-wrap: wrap;
-        }
-        .mood-btn {
-            background: rgba(255,250,225,0.75);
-            border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 60px;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #2c4a2e;
-            cursor: pointer;
-            transition: 0.2s;
-            backdrop-filter: blur(4px);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-        .mood-btn:hover {
-            background: #e6f0e3;
-            transform: scale(0.96);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        /* nút nhạc đặc biệt */
-        .music-control {
-            background: rgba(220,235,215,0.7);
-            border-radius: 50px;
-            padding: 0.5rem 1rem;
-            margin-top: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 0.9rem;
-        }
-        .music-btn {
-            background: #3f684b;
-            border: none;
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             color: white;
-            padding: 6px 18px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
             border-radius: 30px;
-            font-weight: bold;
+            z-index: 100;
+            pointer-events: none;
+            font-size: 14px;
+            letter-spacing: 1px;
+            font-weight: 500;
+            border-left: 3px solid #ff6b6b;
+        }
+        #controls {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+        button {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
             cursor: pointer;
-            transition: 0.2s;
+            font-weight: bold;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-size: 16px;
+            letter-spacing: 1px;
         }
-        .music-btn:hover {
-            background: #2a4a37;
-            transform: scale(0.97);
+        button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.6);
         }
-
-        /* footer nhẹ */
-        .footer {
-            margin-top: 2rem;
-            font-size: 0.7rem;
-            opacity: 0.6;
-            color: #2e4a2e;
+        button:active {
+            transform: scale(0.95);
         }
-
-        /* responsive */
-        @media (max-width: 500px) {
-            .card {
-                padding: 1.5rem;
-            }
-            .time {
-                font-size: 2.8rem;
-                letter-spacing: 2px;
-            }
-            .greeting {
-                font-size: 1.5rem;
-            }
-            .quote-text {
-                font-size: 1rem;
-            }
+        #particleCount {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255,255,255,0.6);
+            background: rgba(0,0,0,0.5);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-family: monospace;
+            z-index: 100;
+            pointer-events: none;
         }
-
-        /* animation nhẹ khi tải */
-        @keyframes fadeSlide {
-            0% { opacity: 0; transform: translateY(15px);}
-            100% { opacity: 1; transform: translateY(0);}
-        }
-        .card {
-            animation: fadeSlide 0.5s ease;
+        @media (max-width: 600px) {
+            button { padding: 6px 16px; font-size: 12px; }
+            #info { font-size: 10px; top: 10px; left: 10px; }
         }
     </style>
 </head>
 <body>
-<div class="card">
-    <div class="greeting">
-        🌿 Chào bạn, <span id="greetName"></span>
+    <div id="info">
+        ✨ COSMIC ODYSSEY | 🖱️ Kéo chuột xoay 3D | 📜 Cuộn zoom
+    </div>
+    <div id="controls">
+        <button id="colorBtn">🎨 Đổi màu vũ trụ</button>
+        <button id="rotateBtn">🔄 Tự động xoay</button>
+        <button id="explodeBtn">💥 Bùng nổ hạt</button>
+        <button id="musicBtn">🎵 Bật nhạc nền</button>
+    </div>
+    <div id="particleCount">
+        ⚡ Particle count: <span id="countValue">0</span>
     </div>
 
-    <div class="clock-panel">
-        <div class="time" id="liveClock">--:--:--</div>
-        <div class="date" id="liveDate"></div>
-    </div>
-
-    <div class="quote-box">
-        <div class="quote-text" id="quoteText">"Hãy hít thở thật sâu, bạn đang làm rất tốt."</div>
-        <div class="quote-author" id="quoteAuthor">🌱 Thiên nhiên</div>
-    </div>
-
-    <div class="mood-bar">
-        <button class="mood-btn" data-mood="calm">🍃 Nhẹ nhàng</button>
-        <button class="mood-btn" data-mood="sunny">☀️ Tươi sáng</button>
-        <button class="mood-btn" data-mood="rainy">🌧️ Trầm lắng</button>
-    </div>
-
-    <div class="music-control">
-        🎵 Nhạc nền nhẹ &nbsp;&nbsp;
-        <button class="music-btn" id="playMusicBtn">▶ Play</button>
-        <button class="music-btn" id="stopMusicBtn">⏹️ Dừng</button>
-    </div>
-    <div class="footer">
-        ✨ Nhấn theo mood → đổi màu nền & câu quote | Nhạc ambient nhẹ (tự động chạy 1 vòng)
-    </div>
-</div>
-
-<script>
-    // ---- 1. XỬ LÝ TÊN NGƯỜI DÙNG (localStorage) ----
-    let userName = localStorage.getItem('mindfulName');
-    if (!userName) {
-        userName = prompt("🌼 Bạn muốn mình gọi bạn là gì?", "Bạn yêu thiên nhiên");
-        if (!userName || userName.trim() === "") userName = "Người bạn nhỏ";
-        userName = userName.slice(0, 20);
-        localStorage.setItem('mindfulName', userName);
-    }
-    document.getElementById('greetName').innerText = userName;
-
-    // ----- 2. ĐỒNG HỒ THỜI GIAN THỰC -----
-    function updateClock() {
-        const now = new Date();
-        const hours = now.getHours().toString().padStart(2,'0');
-        const minutes = now.getMinutes().toString().padStart(2,'0');
-        const seconds = now.getSeconds().toString().padStart(2,'0');
-        document.getElementById('liveClock').innerText = `${hours}:${minutes}:${seconds}`;
-        
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('liveDate').innerHTML = now.toLocaleDateString('vi-VN', options);
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    // ---- 3. CÂU QUOTE THEO MOOD (và mặc định random nhẹ) ----
-    const quotesDB = {
-        calm: [
-            { text: "Im lặng đôi khi là câu trả lời mạnh mẽ nhất.", author: "Lão Tử" },
-            { text: "Hãy chậm lại, hít thở, kết nối với hiện tại.", author: "Thiền" },
-            { text: "Như dòng sông, bạn cũng có thể chảy qua mọi ghềnh thác.", author: "Ẩn danh" }
-        ],
-        sunny: [
-            { text: "Mỗi sớm mai là một khởi đầu mới. Hãy mỉm cười!", author: "Tác giả vui" },
-            { text: "Ánh sáng luôn hiện hữu trong trái tim bạn.", author: "Rumi" },
-            { text: "Hôm nay là một ngày tuyệt vời để tỏa sáng.", author: "🌻" }
-        ],
-        rainy: [
-            { text: "Cơn mưa rửa sạch bụi trần, lòng nhẹ tênh.", author: "Haiku" },
-            { text: "Đôi khi ta cần buông để hiểu mình hơn.", author: "Thiền vị" },
-            { text: "Sự tĩnh lặng nuôi dưỡng tâm hồn.", author: "Lao Tse" }
-        ]
-    };
-    // mặc định
-    let currentMood = "calm";
-
-    function changeMood(mood) {
-        currentMood = mood;
-        // đổi màu nền body theo mood
-        if (mood === "calm") {
-            document.body.style.background = "linear-gradient(145deg, #cadfd9, #b0cfc5)";
-        } else if (mood === "sunny") {
-            document.body.style.background = "linear-gradient(135deg, #f9e7b3, #f5cda0)";
-        } else if (mood === "rainy") {
-            document.body.style.background = "linear-gradient(145deg, #b6c9cf, #94adb5)";
-        }
-        // lấy quote ngẫu nhiên trong mood đó
-        const arr = quotesDB[mood];
-        const randomIndex = Math.floor(Math.random() * arr.length);
-        const quote = arr[randomIndex];
-        document.getElementById('quoteText').innerHTML = `“${quote.text}”`;
-        document.getElementById('quoteAuthor').innerHTML = `— ${quote.author} —`;
-    }
-
-    // gán sự kiện cho các nút mood
-    document.querySelectorAll('.mood-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const moodVal = btn.getAttribute('data-mood');
-            changeMood(moodVal);
-        });
-    });
-
-    // Khởi tạo mood ban đầu (calm)
-    changeMood("calm");
-
-    // ---- 4. NHẠC NỀN NHẸ NHÀNG (Web Audio + Oscillator) hoặc dùng AudioContext? 
-    // Tôi chọn 1 đoạn nhạc ambient bằng Web Audio thay vì file ngoài -> tránh lỗi CORS, nhẹ.
-    let audioCtx = null;
-    let oscillator = null;
-    let gainNode = null;
-    let isPlaying = false;
-
-    function initAudio() {
-        if (audioCtx) return;
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0.3;
-        gainNode.connect(audioCtx.destination);
-    }
-
-    function playAmbient() {
-        if (isPlaying) return;
-        initAudio();
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume().then(() => {
-                startAmbientSound();
-            });
-        } else {
-            startAmbientSound();
-        }
-    }
-
-    function startAmbientSound() {
-        if (isPlaying) return;
-        if (!audioCtx) return;
-        // Tạo sóng sine nhẹ + tam giác tạo cảm giác thư giãn
-        oscillator = audioCtx.createOscillator();
-        const gainOsc = audioCtx.createGain();
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 172; // tông trầm nhẹ
-        gainOsc.gain.value = 0.18;
-
-        oscillator.connect(gainOsc);
-        gainOsc.connect(gainNode);
-        
-        // thêm hài hòa thứ hai ( nhẹ )
-        const osc2 = audioCtx.createOscillator();
-        const gainOsc2 = audioCtx.createGain();
-        osc2.type = 'triangle';
-        osc2.frequency.value = 220;
-        gainOsc2.gain.value = 0.1;
-        osc2.connect(gainOsc2);
-        gainOsc2.connect(gainNode);
-        
-        oscillator.start();
-        osc2.start();
-        
-        // lưu trữ để dừng
-        oscillator._extra = { osc2, gainOsc2, gainOsc };
-        isPlaying = true;
-        
-        // Tự động fade out sau 30s để tránh nhức tai, vẫn loop nếu muốn? nhưng ở đây để nhẹ cho demo
-        setTimeout(() => {
-            if (isPlaying && gainNode) {
-                // giảm nhẹ
-                gainNode.gain.value = 0.12;
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
             }
-        }, 20000);
-    }
-
-    function stopAmbient() {
-        if (!isPlaying) return;
-        if (oscillator) {
-            try {
-                oscillator.stop();
-                if (oscillator._extra && oscillator._extra.osc2) oscillator._extra.osc2.stop();
-            } catch(e) {}
-            oscillator = null;
         }
-        isPlaying = false;
-        if (audioCtx) {
-            // không đóng context nhưng tắt tiếng
-            if (gainNode) gainNode.gain.value = 0;
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        
+        // --- Setup scene ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050510);
+        scene.fog = new THREE.FogExp2(0x050510, 0.0008);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(5, 3, 8);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        document.body.appendChild(renderer.domElement);
+
+        // --- Effect Composer với Bloom (hiệu ứng phát sáng) ---
+        const renderScene = new RenderPass(scene, camera);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.3, 0.85);
+        bloomPass.threshold = 0.1;
+        bloomPass.strength = 0.8;
+        bloomPass.radius = 0.5;
+        const effectComposer = new EffectComposer(renderer);
+        effectComposer.addPass(renderScene);
+        effectComposer.addPass(bloomPass);
+
+        // --- Controls ---
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = false;
+        controls.autoRotateSpeed = 1.5;
+        controls.enableZoom = true;
+        controls.enablePan = true;
+        controls.zoomSpeed = 1.2;
+        controls.rotateSpeed = 1.0;
+
+        // --- Ánh sáng ---
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffaa88, 1, 30);
+        pointLight.position.set(2, 3, 4);
+        scene.add(pointLight);
+        const backLight = new THREE.PointLight(0x4466ff, 0.5);
+        backLight.position.set(-2, -1, -3);
+        scene.add(backLight);
+        
+        // --- Tạo ngôi sao trung tâm (cầu lửa) ---
+        const coreGeometry = new THREE.SphereGeometry(0.6, 64, 64);
+        const coreMaterial = new THREE.MeshStandardMaterial({
+            color: 0xff6600,
+            emissive: 0xff2200,
+            emissiveIntensity: 1.2,
+            metalness: 0.8,
+            roughness: 0.2
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        scene.add(core);
+        
+        // Thêm glow effect cho core bằng point light nhỏ
+        const coreLight = new THREE.PointLight(0xff4400, 1.5, 15);
+        core.add(coreLight);
+        
+        // --- Vòng tròn quỹ đạo (Toruses) ---
+        const ringColors = [0xff3366, 0x33ff66, 0x33aaff, 0xffaa33];
+        const rings = [];
+        for (let i = 0; i < 4; i++) {
+            const radius = 1.8 + i * 0.7;
+            const tube = 0.04;
+            const geometry = new THREE.TorusGeometry(radius, tube, 128, 200);
+            const material = new THREE.MeshStandardMaterial({ color: ringColors[i], emissive: ringColors[i], emissiveIntensity: 0.5 });
+            const ring = new THREE.Mesh(geometry, material);
+            ring.rotation.x = Math.PI / 2;
+            ring.rotation.z = i * Math.PI / 4;
+            scene.add(ring);
+            rings.push(ring);
         }
-    }
-
-    document.getElementById('playMusicBtn').addEventListener('click', () => {
-        playAmbient();
-    });
-    document.getElementById('stopMusicBtn').addEventListener('click', () => {
-        stopAmbient();
-    });
-
-    // Chạy nhẹ nhàng lời chào console (optional)
-    console.log(`%c🌼 Chào ${userName}, hãy tận hưởng khoảng lặng nhé.`, 'color: #2b5a2f; font-size: 14px;');
-    
-    // tự sinh lời chào buổi sáng/chiều/tối trong greeting (nâng cao)
-    const hourNow = new Date().getHours();
-    let timeGreet = "";
-    if (hourNow < 12) timeGreet = "Buổi sáng an lành ☕";
-    else if (hourNow < 18) timeGreet = "Buổi chiều thư thái 🌿";
-    else timeGreet = "Buổi tối ấm cúng 🌙";
-    const greetEl = document.querySelector('.greeting span');
-    if (greetEl) greetEl.innerHTML = `${userName}  •  ${timeGreet}`;
-</script>
+        
+        // --- Hệ thống Particle (bụi vũ trụ) ---
+        const particleCount = 4000;
+        const particlesGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount; i++) {
+            // Hình cầu xoắn ốc
+            const radius = 2.5 + Math.random() * 4.5;
+            const angle = Math.random() * Math.PI * 2;
+            const height = (Math.random() - 0.5) * 3;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+            const y = height * 1.2;
+            positions[i*3] = x;
+            positions[i*3+1] = y;
+            positions[i*3+2] = z;
+            
+            // Màu sắc theo vị trí
+            const color = new THREE.Color().setHSL(0.55 + Math.random() * 0.2, 0.8, 0.6);
+            colors[i*3] = color.r;
+            colors[i*3+1] = color.g;
+            colors[i*3+2] = color.b;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        
+        const particleMaterial = new THREE.PointsMaterial({ size: 0.07, vertexColors: true, blending: THREE.AdditiveBlending });
+        const particleSystem = new THREE.Points(particlesGeometry, particleMaterial);
+        scene.add(particleSystem);
+        
+        document.getElementById('countValue').innerText = particleCount;
+        
+        // --- Particle thứ hai: bụi bay lơ lửng ---
+        const dustCount = 2000;
+        const dustGeo = new THREE.BufferGeometry();
+        const dustPos = [];
+        for (let i = 0; i < dustCount; i++) {
+            dustPos.push((Math.random() - 0.5) * 15);
+            dustPos.push((Math.random() - 0.5) * 10);
+            dustPos.push((Math.random() - 0.5) * 12);
+        }
+        dustGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(dustPos), 3));
+        const dustMat = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.03, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
+        const dustSystem = new THREE.Points(dustGeo, dustMat);
+        scene.add(dustSystem);
+        
+        // --- Tinh vân (sprite) ---
+        const spriteMap = (() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(255,200,100,0)';
+            ctx.fillRect(0, 0, 32, 32);
+            ctx.beginPath();
+            ctx.arc(16, 16, 12, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,180,80,0.7)';
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.shadowBlur = 0;
+            return new THREE.CanvasTexture(canvas);
+        })();
+        
+        const nebulaCount = 80;
+        const nebulae = [];
+        for (let i = 0; i < nebulaCount; i++) {
+            const material = new THREE.SpriteMaterial({ map: spriteMap, color: 0xffaa66, blending: THREE.AdditiveBlending });
+            const sprite = new THREE.Sprite(material);
+            const rad = 3 + Math.random() * 4;
+            const ang = Math.random() * Math.PI * 2;
+            sprite.position.x = Math.cos(ang) * rad;
+            sprite.position.z = Math.sin(ang) * rad;
+            sprite.position.y = (Math.random() - 0.5) * 2.5;
+            sprite.scale.set(0.2, 0.2, 1);
+            scene.add(sprite);
+            nebulae.push(sprite);
+        }
+        
+        // --- Biến điều khiển ---
+        let autoRotate = false;
+        let explodeMode = false;
+        let explodeTime = 0;
+        let originalPositions = positions.slice();
+        
+        // --- Audio (tạo nhạc nền nhẹ bằng Web Audio API) ---
+        let audioCtx = null;
+        let isMusicOn = false;
+        let osc1, osc2, gainNode;
+        
+        function initAudio() {
+            if (audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0.15;
+            gainNode.connect(audioCtx.destination);
+        }
+        
+        function startMusic() {
+            if (isMusicOn) return;
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => playTone);
+            }
+            playTone();
+        }
+        
+        function playTone() {
+            if (isMusicOn) return;
+            if (!audioCtx) return;
+            osc1 = audioCtx.createOscillator();
+            osc2 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            const gain2 = audioCtx.createGain();
+            osc1.type = 'sine';
+            osc2.type = 'triangle';
+            osc1.frequency.value = 130.81; // C3
+            osc2.frequency.value = 174.61;  // F3
+            gain1.gain.value = 0.1;
+            gain2.gain.value = 0.08;
+            osc1.connect(gain1);
+            osc2.connect(gain2);
+            gain1.connect(gainNode);
+            gain2.connect(gainNode);
+            osc1.start();
+            osc2.start();
+            isMusicOn = true;
+        }
+        
+        function stopMusic() {
+            if (!isMusicOn) return;
+            if (osc1) osc1.stop();
+            if (osc2) osc2.stop();
+            isMusicOn = false;
+        }
+        
+        // --- Events ---
+        document.getElementById('colorBtn').addEventListener('click', () => {
+            const hue = Math.random();
+            scene.background.setHSL(hue, 0.6, 0.05);
+            scene.fog.color.setHSL(hue, 0.6, 0.05);
+            bloomPass.strength = 0.5 + Math.random() * 1;
+            coreMaterial.emissiveIntensity = 0.8 + Math.random() * 1;
+        });
+        
+        document.getElementById('rotateBtn').addEventListener('click', () => {
+            autoRotate = !autoRotate;
+            controls.autoRotate = autoRotate;
+            document.getElementById('rotateBtn').style.borderColor = autoRotate ? '#ff6b6b' : 'rgba(255,255,255,0.3)';
+        });
+        
+        document.getElementById('explodeBtn').addEventListener('click', () => {
+            explodeMode = true;
+            explodeTime = 0;
+            // Lưu vị trí gốc
+            const posAttr = particlesGeometry.attributes.position.array;
+            for (let i = 0; i < particleCount * 3; i++) {
+                originalPositions[i] = posAttr[i];
+            }
+            // Bung ra xa
+            for (let i = 0; i < particleCount; i++) {
+                const idx = i * 3;
+                const angle1 = Math.random() * Math.PI * 2;
+                const angle2 = Math.random() * Math.PI * 2;
+                const r = 5 + Math.random() * 8;
+                posAttr[idx] = Math.sin(angle1) * Math.cos(angle2) * r;
+                posAttr[idx+1] = Math.sin(angle1) * Math.sin(angle2) * r;
+                posAttr[idx+2] = Math.cos(angle1) * r;
+            }
+            particlesGeometry.attributes.position.needsUpdate = true;
+            setTimeout(() => {
+                explodeMode = false;
+                // Trả về từ từ
+                for (let i = 0; i < particleCount * 3; i++) {
+                    particlesGeometry.attributes.position.array[i] = originalPositions[i];
+                }
+                particlesGeometry.attributes.position.needsUpdate = true;
+            }, 1500);
+        });
+        
+        document.getElementById('musicBtn').addEventListener('click', () => {
+            if (isMusicOn) {
+                stopMusic();
+                document.getElementById('musicBtn').style.opacity = '0.6';
+            } else {
+                startMusic();
+                document.getElementById('musicBtn').style.opacity = '1';
+            }
+        });
+        
+        // --- Animation loop ---
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.008;
+            
+            // Xoay các vòng tròn
+            rings.forEach((ring, idx) => {
+                ring.rotation.z += 0.005 * (idx + 1);
+                ring.rotation.x = Math.PI / 2 + Math.sin(time * 0.5 + idx) * 0.1;
+            });
+            
+            // Xoay hệ hạt chậm
+            particleSystem.rotation.y += 0.002;
+            dustSystem.rotation.x += 0.001;
+            dustSystem.rotation.y += 0.0015;
+            
+            // Làm nhấp nháy core
+            const intensity = 1.2 + Math.sin(time * 8) * 0.4;
+            coreLight.intensity = intensity;
+            coreMaterial.emissiveIntensity = 0.8 + Math.sin(time * 5) * 0.3;
+            
+            // Di chuyển tinh vân nhẹ
+            nebulae.forEach((neb, i) => {
+                neb.position.x += Math.sin(time + i) * 0.002;
+                neb.position.y += Math.cos(time * 0.7 + i) * 0.001;
+            });
+            
+            // Cập nhật controls
+            controls.update();
+            
+            // Render với EffectComposer
+            effectComposer.render();
+        }
+        
+        animate();
+        
+        // Resize handler
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            effectComposer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Console log
+        console.log('%c✨ COSMIC ODYSSEY LOADED | Enjoy the 3D universe! ✨', 'color: #ff6b6b; font-size: 16px; font-weight: bold;');
+    </script>
 </body>
 </html>
