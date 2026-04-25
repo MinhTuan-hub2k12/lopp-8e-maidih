@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Không Buông - Hngle | Trần Minh Tuấn 2k12 Fireworks</title>
+    <title>Trần Minh Tuấn 2k12 | Studio Lyric Animation</title>
     <style>
         * {
             margin: 0;
@@ -14,719 +14,537 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(145deg, #0a0f1e 0%, #03050b 100%);
-            font-family: 'Poppins', 'Segoe UI', 'Montserrat', system-ui, sans-serif;
-            overflow-x: hidden;
-            position: relative;
+            background: radial-gradient(circle at 10% 20%, #0a0f2a, #020617);
+            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow-x: hidden;
         }
 
-        /* Canvas pháo hoa full màn hình */
-        #fireworksCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* Container chính */
+        .app-container {
             width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
+            max-width: 700px;
+            transition: all 0.3s ease;
         }
 
-        /* Card chính lung linh */
-        .glass-card {
-            position: relative;
-            z-index: 20;
-            max-width: 600px;
-            width: 100%;
-            background: rgba(10, 20, 35, 0.55);
+        /* KHUNG NHẬP LIỆU (trạng thái ban đầu) */
+        .input-panel {
+            background: rgba(10, 20, 35, 0.65);
             backdrop-filter: blur(16px);
-            border-radius: 64px;
-            padding: 1.8rem 1.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 200, 255, 0.2);
-            transition: all 0.2s;
-            animation: floatCard 4s ease-in-out infinite;
-        }
-
-        @keyframes floatCard {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-6px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* header tên + badge */
-        .tuanname {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .glow-name {
-            font-size: 2.2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #FFE6B0, #FF8ACD, #B77CFF, #6EE7FF);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: gradientFlow 5s ease infinite, textPulse 1.5s infinite alternate;
-            letter-spacing: 2px;
-        }
-
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes textPulse {
-            0% { text-shadow: 0 0 2px #fff, 0 0 4px #ff66c0; }
-            100% { text-shadow: 0 0 18px #ff44aa, 0 0 28px #a56eff; }
-        }
-
-        .badge-2k {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 60px;
-            display: inline-block;
-            padding: 5px 18px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #ffecb3;
-            border: 1px solid #ffb347;
-            margin-top: 6px;
-        }
-
-        /* visualizer với hiệu ứng sóng */
-        .visualizer-wrap {
-            background: rgba(0, 0, 0, 0.4);
             border-radius: 48px;
-            padding: 12px;
-            margin: 20px 0;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        canvas#audioWave {
-            width: 100%;
-            display: block;
-            border-radius: 36px;
-            background: #01051c;
-            box-shadow: 0 0 20px rgba(255, 100, 200, 0.4);
-            aspect-ratio: 800/260;
-        }
-
-        /* điều khiển nhạc */
-        .music-controls {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin: 20px 0 15px;
-        }
-
-        .ctrl-circle {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border: none;
-            width: 56px;
-            height: 56px;
-            border-radius: 60px;
-            font-size: 28px;
-            cursor: pointer;
-            transition: 0.2s;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 12px black;
-        }
-
-        .ctrl-circle:active {
-            transform: scale(0.94);
-        }
-
-        .play-main {
-            background: linear-gradient(145deg, #ff4f9e, #c12f7a);
-            width: 72px;
-            height: 72px;
-            font-size: 38px;
-            box-shadow: 0 0 18px #ff70c0;
-        }
-
-        .song-title-area {
+            padding: 2rem 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             text-align: center;
-            font-weight: 600;
-            background: rgba(0, 0, 0, 0.45);
-            border-radius: 50px;
-            padding: 8px 12px;
-            margin-top: 8px;
+            transition: all 0.4s;
         }
 
-        .song-name {
-            font-size: 1.3rem;
-            letter-spacing: 1px;
-            background: linear-gradient(120deg, #ffdd99, #ffb3e6);
+        .title-glow {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD966, #FF85C2, #A569FF);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            margin-bottom: 8px;
         }
 
-        .volume-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        input.volume-slider {
-            width: 130px;
-            height: 4px;
-            border-radius: 10px;
-            background: #ff88bb;
-        }
-
-        /* ========== LỜI NHẠC HOẠT HÌNH TUYỆT ĐẸP ========== */
-        .lyrics-container {
-            margin-top: 24px;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(8px);
-            border-radius: 40px;
-            padding: 18px 12px;
-            text-align: center;
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255, 215, 150, 0.4);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .lyric-line {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff0cc;
-            text-shadow: 0 0 8px #ff66aa, 0 0 12px #ff44aa;
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            opacity: 0;
-            transform: translateY(20px) scale(0.9);
-            animation: lyricFloatIn 0.5s forwards;
+        .sub {
+            color: #aaaaff;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
             letter-spacing: 1px;
-            background: linear-gradient(145deg, #ffddbb, #ffb3ff);
+        }
+
+        textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 180, 200, 0.5);
+            border-radius: 32px;
+            padding: 18px 20px;
+            font-size: 1rem;
+            font-family: 'Poppins', monospace;
+            color: #ffecb3;
+            resize: vertical;
+            outline: none;
+            transition: 0.2s;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+        }
+
+        textarea:focus {
+            border-color: #ff66cc;
+            box-shadow: 0 0 15px #ff66aa;
+        }
+
+        .btn-run {
+            background: linear-gradient(95deg, #ff3d8c, #b73c9e);
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            border-radius: 60px;
+            margin-top: 24px;
+            cursor: pointer;
+            width: 80%;
+            transition: 0.2s;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+
+        .btn-run:hover {
+            transform: scale(1.02);
+            background: linear-gradient(95deg, #ff5fa0, #d44bb3);
+            box-shadow: 0 0 18px #ff66aa;
+        }
+
+        /* KHUNG HIỆN THỊ ANIMATION (ẩn ban đầu) */
+        .animation-panel {
+            display: none;
+            background: rgba(5, 8, 20, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 56px;
+            padding: 1.8rem;
+            border: 1px solid rgba(255, 215, 150, 0.5);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+            text-align: center;
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .artist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .song-badge {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.5);
+            padding: 6px 18px;
+            border-radius: 40px;
+            color: #ffdd99;
+            border-left: 4px solid #ff77aa;
+        }
+
+        .btn-back {
+            background: rgba(255,255,240,0.15);
+            border: none;
+            border-radius: 40px;
+            padding: 8px 20px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: 0.2s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,100,150,0.4);
+        }
+
+        /* Khung chứa lời nhạc animation */
+        .lyric-stage {
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 48px;
+            min-height: 380px;
+            padding: 32px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 200, 150, 0.3);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .animated-lyric {
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            line-height: 1.4;
+            transition: all 0.4s ease;
+            color: #fff0cc;
+            text-shadow: 0 0 5px #ff66aa, 0 0 12px #ff44aa;
+            word-break: break-word;
+            animation: lyricPulse 1.6s infinite alternate;
+            background: linear-gradient(135deg, #ffe6b3, #ffb3e6);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-shadow: none;
         }
 
-        @keyframes lyricFloatIn {
+        @keyframes lyricPulse {
             0% {
-                opacity: 0;
-                transform: translateY(25px) scale(0.85);
-                filter: blur(8px);
+                letter-spacing: 1px;
+                filter: drop-shadow(0 0 2px #ff88cc);
+                transform: scale(1);
             }
             100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: blur(0);
+                letter-spacing: 4px;
+                filter: drop-shadow(0 0 12px #ff44ee);
+                transform: scale(1.02);
             }
         }
 
-        .lyric-line.active-glow {
-            animation: pulseLyric 0.6s infinite alternate;
+        /* Hiệu ứng nền động nhẹ */
+        .moving-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .orb {
+            position: absolute;
+            width: 40vmax;
+            height: 40vmax;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,100,200,0.2), transparent);
+            animation: floatBg 18s infinite alternate;
+            filter: blur(70px);
+        }
+        .orb2 {
+            background: radial-gradient(circle, rgba(100,200,255,0.2), transparent);
+            bottom: 0;
+            right: 0;
+            animation: floatBg2 22s infinite alternate;
+        }
+        @keyframes floatBg {
+            0% { transform: translate(0,0) scale(1); opacity: 0.4; }
+            100% { transform: translate(8%, 10%) scale(1.3); opacity: 0.8; }
+        }
+        @keyframes floatBg2 {
+            0% { transform: translate(0,0) scale(0.9); opacity: 0.3; }
+            100% { transform: translate(-12%, -8%) scale(1.4); opacity: 0.7; }
         }
 
-        @keyframes pulseLyric {
-            0% { text-shadow: 0 0 2px gold, 0 0 4px #ff66cc; letter-spacing: 1px; }
-            100% { text-shadow: 0 0 20px #ffaaff, 0 0 30px #ff66c0; letter-spacing: 3px; }
+        /* Nút điều khiển animation */
+        .animation-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 16px 0 8px;
         }
-
-        /* footer */
+        .anim-btn {
+            background: rgba(255,255,240,0.15);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .anim-btn-primary {
+            background: linear-gradient(145deg, #ff4d9e, #bb2e7a);
+            box-shadow: 0 0 6px #ff77bb;
+        }
         .footer {
             font-size: 0.7rem;
             text-align: center;
-            margin-top: 22px;
-            color: #bbbbff;
+            margin-top: 20px;
+            color: #aaaaf0;
         }
 
         @media (max-width: 550px) {
-            .glow-name { font-size: 1.7rem; }
-            .lyric-line { font-size: 1rem; }
-            .song-name { font-size: 1rem; }
-            .glass-card { padding: 1.2rem; }
+            .animated-lyric { font-size: 1.4rem; }
+            .title-glow { font-size: 1.3rem; }
+            .input-panel { padding: 1.5rem; }
+            .btn-run { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-<canvas id="fireworksCanvas"></canvas>
+<div class="moving-bg">
+    <div class="orb"></div>
+    <div class="orb orb2"></div>
+</div>
 
-<div class="glass-card">
-    <div class="tuanname">
-        <div class="glow-name">✨ Trần Minh Tuấn 2k12 ✨</div>
-        <div class="badge-2k">⚡ BÙNG NỔ PHÁO HOA + LỜI NHẠC HOẠT HÌNH ⚡</div>
-    </div>
-
-    <div class="visualizer-wrap">
-        <canvas id="audioWave" width="800" height="260"></canvas>
-    </div>
-
-    <div class="music-controls">
-        <button class="ctrl-circle" id="prevBtn">⏮️</button>
-        <button class="ctrl-circle play-main" id="playPauseBtn">▶️</button>
-        <button class="ctrl-circle" id="nextBtn">⏭️</button>
-    </div>
-
-    <div class="song-title-area">
-        <div class="song-name">🎶 Không Buông - Hngle 🎶</div>
-        <div class="volume-row">
-            <span style="color:#ffc8dd;">🔊</span>
-            <input type="range" id="volumeCtrl" class="volume-slider" min="0" max="1" step="0.01" value="0.7">
+<div class="app-container">
+    <!-- ========== PHẦN NHẬP LỜI NHẠC ========= -->
+    <div id="inputSection" class="input-panel">
+        <div class="title-glow">✨ Trần Minh Tuấn 2k12 ✨</div>
+        <div class="sub">📝 Nhập lời bài hát "Không Buông" (hoặc lời bạn muốn) bên dưới</div>
+        <textarea id="lyricInput" rows="5" placeholder="Ví dụ:&#10;Không buông tay anh nhé&#10;Dù cho mai sau cách xa&#10;Vẫn luôn yêu em mà..."></textarea>
+        <div>
+            <button class="btn-run" id="runBtn">🎆 CHẠY HIỆU ỨNG 🎆</button>
         </div>
+        <div class="footer" style="margin-top: 18px;">💡 Nhập mỗi câu trên một dòng → Bấm chạy để xem animation chữ đẹp mắt</div>
     </div>
 
-    <!-- Khu vực lời nhạc hoạt ảnh siêu đẹp -->
-    <div class="lyrics-container" id="lyricsBox">
-        <div id="dynamicLyric" class="lyric-line">💖 Không Buông - Hngle 💖</div>
-    </div>
-    <div class="footer">
-        🎆 Pháo hoa rực rỡ | Lời nhạc hiện lên theo từng câu 🎆
+    <!-- ========== PHẦN HIỂN THỊ ANIMATION (ban đầu ẩn) ========= -->
+    <div id="animationSection" class="animation-panel">
+        <div class="artist-header">
+            <span class="song-badge">🎤 Không Buông - Hngle 🎤</span>
+            <button id="backBtn" class="btn-back">✍️ Nhập lời mới</button>
+        </div>
+        <div class="lyric-stage" id="lyricStage">
+            <div id="displayLyric" class="animated-lyric">✨ Chờ đợi hiệu ứng... ✨</div>
+        </div>
+        <div class="animation-controls">
+            <button id="prevLineBtn" class="anim-btn">⏮️ Câu trước</button>
+            <button id="playAutoBtn" class="anim-btn anim-btn-primary">▶️ TỰ ĐỘNG</button>
+            <button id="nextLineBtn" class="anim-btn">Câu tiếp ⏭️</button>
+        </div>
+        <div class="footer">
+            🎵 Animation chữ lung linh | Tự động chuyển câu sau 3.5 giây | Bấm nút để tương tác
+        </div>
     </div>
 </div>
 
 <script>
-    (function(){
-        // ----------------------------- BÀI HÁT "KHÔNG BUÔNG" (Hngle) -------------------------
-        // Sử dụng audio URL từ nguồn nhạc hợp lệ, nhưng để đảm bảo trải nghiệm,
-        // dùng bài nhạc mẫu chất lượng và thay thế bằng đúng tên bài “Không Buông”. 
-        // Vì không thể đính kèm file nhạc gốc, tôi dùng nguồn nhạc nền tương thích CORS,
-        // nhưng vẫn giữ đúng vibe không buông, và hiển thị lời hoàn chỉnh.
-        // Để có đúng bài hát "Không Buông" – chúng ta sẽ dùng 1 file nhạc mp3 có sẵn từ thư viện free
-        // nhưng tinh thần là "Không Buông" của Hngle, lời bài hát được viết hoàn chỉnh.
-        
-        // Lời bài hát "Không Buông" (sáng tác Hngle) - những câu cảm xúc
-        const lyricsList = [
-            "🌙 Đêm nay mình anh ngồi nhìn mưa rơi",
-            "💔 Nhớ những lúc đôi tay chưa rời xa",
-            "🍂 Lòng vẫn cứ thế không buông tiếng yêu",
-            "🎵 Dù cho giông bão cũng chẳng thể phai",
-            "✨ Không buông đôi tay, dù cách xa chân trời",
-            "💫 Vì anh tin ta sẽ mãi bên nhau dài lâu",
-            "🔥 Hngle - Không Buông, giữ mãi trong tim",
-            "💖 Dẫu bao năm tháng, vẫn chẳng đổi thay"
-        ];
-        
-        let currentLyricIndex = 0;
-        let lyricInterval = null;
-        
-        // Hàm cập nhật lời bài hát với animation đẹp
-        function updateLyric(index) {
-            const lyricElement = document.getElementById('dynamicLyric');
-            if(!lyricElement) return;
-            // reset animation
-            lyricElement.style.animation = 'none';
-            lyricElement.offsetHeight; // reflow
-            lyricElement.innerText = lyricsList[index % lyricsList.length];
-            lyricElement.style.animation = 'lyricFloatIn 0.5s forwards';
-            // thêm class nhấp nháy
-            lyricElement.classList.remove('active-glow');
-            setTimeout(() => {
-                lyricElement.classList.add('active-glow');
-            }, 100);
-            // xóa sau 1.2s để tránh trùng
-            setTimeout(() => {
-                if(lyricElement) lyricElement.classList.remove('active-glow');
-            }, 1200);
-        }
-        
-        function startLyricSequence() {
-            if(lyricInterval) clearInterval(lyricInterval);
-            currentLyricIndex = 0;
-            updateLyric(0);
-            lyricInterval = setInterval(() => {
-                currentLyricIndex = (currentLyricIndex + 1) % lyricsList.length;
-                updateLyric(currentLyricIndex);
-            }, 3800); // mỗi 3.8s đổi câu
-        }
-        
-        function stopLyricSequence() {
-            if(lyricInterval) {
-                clearInterval(lyricInterval);
-                lyricInterval = null;
-            }
-        }
-        
-        // ----------------------------- ÂM THANH & VISUALIZER -----------------------------
-        // Playlist: chỉ bài "Không Buông" các phiên bản remix cảm xúc, nhưng chúng ta sẽ đặt 1 bài duy nhất 
-        // để tạo trải nghiệm liền mạch, nhưng nếu muốn thêm các bản khác style không buông cũng được.
-        const songs = [
-            { name: "🎧 Không Buông - Hngle (Official) 🎧", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-            { name: "💞 Không Buông - Acoustic Version 💞", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-            { name: "✨ Không Buông - Hngle (Remix 2k12) ✨", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
-        ];
-        // Tuy nhiên tất cả vẫn hiển thị tên bài là "Không Buông - Hngle", nhưng để đúng thông điệp.
-        
-        let currentTrack = 0;
-        let audio = new Audio();
-        audio.crossOrigin = "Anonymous";
-        let audioCtx = null;
-        let analyser = null;
-        let source = null;
-        let isSetup = false;
-        let animationFrame = null;
-        
-        const canvasWave = document.getElementById('audioWave');
-        const waveCtx = canvasWave.getContext('2d');
-        let waveDataArray = null;
-        
+    (function() {
         // DOM elements
-        const playBtn = document.getElementById('playPauseBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const volumeSlider = document.getElementById('volumeCtrl');
-        const songTitleSpan = document.querySelector('.song-name');
-        
-        function updateSongNameUI() {
-            songTitleSpan.innerHTML = `🎶 Không Buông - Hngle 🎶`;  // luôn hiển thị đúng bài hát chính
-        }
-        
-        function setupAudioContext() {
-            if(!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 256;
-                const bufferLength = analyser.frequencyBinCount;
-                waveDataArray = new Uint8Array(bufferLength);
-                analyser.connect(audioCtx.destination);
-            }
-            if(source) {
-                try { source.disconnect(); } catch(e) {}
-            }
-            source = audioCtx.createMediaElementSource(audio);
-            source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-            isSetup = true;
-        }
-        
-        function loadTrack(index) {
-            const track = songs[index % songs.length];
-            audio.pause();
-            audio.src = track.url;
-            audio.load();
-            audio.volume = volumeSlider.value;
-            updateSongNameUI();
-            if(audioCtx && audioCtx.state === 'running' && !audio.paused) {
-                audio.play().catch(e=>console.log);
-            }
-        }
-        
-        async function playAudio() {
-            if(!audioCtx) {
-                setupAudioContext();
-            }
-            if(audioCtx && audioCtx.state === 'suspended') {
-                await audioCtx.resume();
-            }
-            if(!isSetup && audioCtx) {
-                setupAudioContext();
-                await audioCtx.resume();
-            }
-            await audio.play().catch(e => console.warn("play error", e));
-            playBtn.innerHTML = '⏸️';
-            startLyricSequence();
-        }
-        
-        function pauseAudio() {
-            audio.pause();
-            playBtn.innerHTML = '▶️';
-            stopLyricSequence();
-            const lyricBox = document.getElementById('dynamicLyric');
-            if(lyricBox) lyricBox.innerText = "💔 Nhấn play để cảm xúc dâng trào... 💔";
-        }
-        
-        function togglePlay() {
-            if(audio.paused) {
-                playAudio();
-            } else {
-                pauseAudio();
-            }
-        }
-        
-        function nextTrackFunc() {
-            currentTrack = (currentTrack + 1) % songs.length;
-            loadTrack(currentTrack);
-            if(!audio.paused) {
-                playAudio();
-            } else {
-                updateSongNameUI();
-                const lyricDiv = document.getElementById('dynamicLyric');
-                if(lyricDiv) lyricDiv.innerText = "🎵 Không Buông - bản tiếp theo 🎵";
-                stopLyricSequence();
-            }
-        }
-        
-        function prevTrackFunc() {
-            currentTrack = (currentTrack - 1 + songs.length) % songs.length;
-            loadTrack(currentTrack);
-            if(!audio.paused) {
-                playAudio();
-            } else {
-                updateSongNameUI();
-                const lyricDiv = document.getElementById('dynamicLyric');
-                if(lyricDiv) lyricDiv.innerText = "💞 Lắng nghe Không Buông 💞";
-                stopLyricSequence();
-            }
-        }
-        
-        audio.addEventListener('ended', () => {
-            nextTrackFunc();
-        });
-        
-        audio.addEventListener('play', () => {
-            playBtn.innerHTML = '⏸️';
-            startLyricSequence();
-        });
-        audio.addEventListener('pause', () => {
-            playBtn.innerHTML = '▶️';
-            stopLyricSequence();
-        });
-        
-        volumeSlider.addEventListener('input', (e) => {
-            audio.volume = parseFloat(e.target.value);
-        });
-        
-        playBtn.addEventListener('click', togglePlay);
-        prevBtn.addEventListener('click', prevTrackFunc);
-        nextBtn.addEventListener('click', nextTrackFunc);
-        
-        // visualizer vẽ đẹp
-        function resizeCanvasWave() {
-            const container = canvasWave.parentElement;
-            const w = container.clientWidth - 10;
-            canvasWave.width = Math.min(w, 800);
-            canvasWave.height = 260;
-        }
-        window.addEventListener('resize', () => resizeCanvasWave());
-        
-        function drawWaveVisualizer() {
-            if(!analyser || !waveDataArray) {
-                requestAnimationFrame(drawWaveVisualizer);
+        const inputSection = document.getElementById('inputSection');
+        const animationSection = document.getElementById('animationSection');
+        const runBtn = document.getElementById('runBtn');
+        const backBtn = document.getElementById('backBtn');
+        const lyricInput = document.getElementById('lyricInput');
+        const displayLyricDiv = document.getElementById('displayLyric');
+        const prevLineBtn = document.getElementById('prevLineBtn');
+        const nextLineBtn = document.getElementById('nextLineBtn');
+        const playAutoBtn = document.getElementById('playAutoBtn');
+
+        // Dữ liệu lời bài hát được phân tích từ input
+        let lyricsArray = [];        // mảng các dòng lời
+        let currentIndex = 0;
+        let autoInterval = null;
+        let isAutoPlaying = false;
+
+        // Hàm xử lý animation chuyển câu với hiệu ứng đẹp mắt
+        function updateLyricDisplay() {
+            if (!lyricsArray.length) {
+                displayLyricDiv.innerText = "💖 Không có lời nào, hãy quay lại nhập lời! 💖";
                 return;
             }
-            analyser.getByteFrequencyData(waveDataArray);
-            const width = canvasWave.width;
-            const height = canvasWave.height;
-            if(width === 0) {
-                resizeCanvasWave();
-                return;
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex >= lyricsArray.length) currentIndex = lyricsArray.length - 1;
+            const newText = lyricsArray[currentIndex];
+            // reset animation để tạo hiệu ứng mượt
+            displayLyricDiv.style.animation = 'none';
+            displayLyricDiv.offsetHeight; // force reflow
+            displayLyricDiv.innerText = newText;
+            displayLyricDiv.style.animation = 'lyricPulse 1.6s infinite alternate';
+            // thêm hiệu ứng glow tạm thời
+            displayLyricDiv.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                if (displayLyricDiv) displayLyricDiv.style.transform = '';
+            }, 200);
+        }
+
+        // Dừng auto play nếu đang chạy
+        function stopAutoPlay() {
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
             }
-            waveCtx.clearRect(0, 0, width, height);
-            // gradient nền
-            const grad = waveCtx.createLinearGradient(0, 0, width, 0);
-            grad.addColorStop(0, '#0a0520');
-            grad.addColorStop(1, '#140b2e');
-            waveCtx.fillStyle = grad;
-            waveCtx.fillRect(0, 0, width, height);
-            
-            const barCount = waveDataArray.length;
-            const barWidth = width / barCount * 1.5;
-            let x = 0;
-            for(let i=0; i<barCount; i++) {
-                let val = waveDataArray[i] / 255;
-                let barHeight = val * height * 0.75;
-                if(barHeight < 2) barHeight = 2;
-                // màu theo cường độ + neon
-                let hue = (i * 0.6 + Date.now() * 0.02) % 360;
-                let sat = 80;
-                let light = 50 + val * 40;
-                waveCtx.fillStyle = `hsl(${hue}, ${sat}%, ${light}%)`;
-                waveCtx.shadowBlur = 8;
-                waveCtx.shadowColor = `hsl(${hue}, 90%, 65%)`;
-                waveCtx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
-                x += barWidth;
-            }
-            waveCtx.shadowBlur = 0;
-            // thêm hiệu ứng hạt sáng lung linh
-            if(waveDataArray[50] > 120) {
-                waveCtx.fillStyle = "rgba(255,200,230,0.3)";
-                for(let s=0; s<15; s++) {
-                    waveCtx.beginPath();
-                    waveCtx.arc(Math.random()*width, Math.random()*height, Math.random()*4+2, 0, Math.PI*2);
-                    waveCtx.fill();
+            isAutoPlaying = false;
+            if (playAutoBtn) playAutoBtn.innerHTML = '▶️ TỰ ĐỘNG';
+        }
+
+        // Bắt đầu auto play (chạy lần lượt các câu)
+        function startAutoPlay() {
+            if (!lyricsArray.length) return;
+            stopAutoPlay();
+            isAutoPlaying = true;
+            playAutoBtn.innerHTML = '⏸️ DỪNG';
+            autoInterval = setInterval(() => {
+                if (currentIndex + 1 < lyricsArray.length) {
+                    currentIndex++;
+                    updateLyricDisplay();
+                } else {
+                    // nếu hết lời, quay lại câu đầu (hoặc dừng - tùy chọn: quay lại để trải nghiệm)
+                    currentIndex = 0;
+                    updateLyricDisplay();
+                    // tạo hiệu ứng phấn khích
+                    addTemporaryGlow();
                 }
-            }
-            requestAnimationFrame(drawWaveVisualizer);
+            }, 3500); // mỗi 3.5s chuyển câu
         }
-        
-        // Khởi tạo audio load ban đầu
-        loadTrack(0);
-        resizeCanvasWave();
-        drawWaveVisualizer();
-        
-        // Setup khi người dùng click để resume context
-        document.body.addEventListener('click', function initAudioOnFirstInteraction() {
-            if(audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            if(!analyser && audioCtx) {
-                setupAudioContext();
-            }
-        }, { once: false });
-        
-        // ----------------------------- PHÁO HOA RỰC RỠ -----------------------------
-        const fireworksCanvas = document.getElementById('fireworksCanvas');
-        let fwCtx = fireworksCanvas.getContext('2d');
-        let widthFw = window.innerWidth;
-        let heightFw = window.innerHeight;
-        let particles = [];
-        
-        function resizeFireworks() {
-            widthFw = window.innerWidth;
-            heightFw = window.innerHeight;
-            fireworksCanvas.width = widthFw;
-            fireworksCanvas.height = heightFw;
-        }
-        window.addEventListener('resize', resizeFireworks);
-        resizeFireworks();
-        
-        class FireParticle {
-            constructor(x, y, vx, vy, color, size, alpha, life) {
-                this.x = x; this.y = y; this.vx = vx; this.vy = vy;
-                this.color = color; this.size = size; this.alpha = alpha;
-                this.life = life; this.maxLife = life;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vy += 0.1;
-                this.life -= 1;
-                this.alpha = this.life / this.maxLife;
-                return this.life > 0;
-            }
-            draw(ctx) {
-                ctx.save();
-                ctx.globalAlpha = this.alpha * 0.9;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 8;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-        
-        function createFirework(x, y) {
-            const colors = ['#ff4d4d', '#ff80bf', '#ffcc66', '#7aff87', '#66e0ff', '#ff66f0', '#ffaa33'];
-            const count = 48 + Math.floor(Math.random() * 40);
-            for(let i=0; i<count; i++) {
-                let angle = Math.random() * Math.PI * 2;
-                let speed = 2 + Math.random() * 5;
-                let vx = Math.cos(angle) * speed * (Math.random() * 1.2);
-                let vy = Math.sin(angle) * speed * (Math.random() * 1.2);
-                let color = colors[Math.floor(Math.random() * colors.length)];
-                let size = 2 + Math.random() * 4;
-                let life = 70 + Math.random() * 40;
-                particles.push(new FireParticle(x, y, vx, vy, color, size, 1, life));
-            }
-        }
-        
-        function randomFirework() {
-            let x = Math.random() * widthFw;
-            let y = Math.random() * heightFw * 0.7 + 50;
-            createFirework(x, y);
-        }
-        
-        let fireworkInterval;
-        function startFireworks() {
-            if(fireworkInterval) clearInterval(fireworkInterval);
-            fireworkInterval = setInterval(() => {
-                randomFirework();
-                if(Math.random() > 0.5) setTimeout(() => randomFirework(), 200);
-            }, 1000);
-        }
-        
-        function animateFireworks() {
-            if(!fwCtx) return;
-            fwCtx.clearRect(0, 0, widthFw, heightFw);
-            fwCtx.globalCompositeOperation = 'source-over';
-            fwCtx.fillStyle = 'rgba(0,0,0,0.15)';
-            fwCtx.fillRect(0, 0, widthFw, heightFw);
-            fwCtx.globalCompositeOperation = 'lighter';
-            for(let i=0; i<particles.length; i++) {
-                let p = particles[i];
-                let alive = p.update();
-                if(alive) p.draw(fwCtx);
-                else particles.splice(i,1), i--;
-            }
-            requestAnimationFrame(animateFireworks);
-        }
-        
-        startFireworks();
-        animateFireworks();
-        
-        // Thêm pháo hoa mỗi khi nhấn nút play/phát nhạc
-        function burstFireworkOnMusic() {
-            for(let i=0; i<3; i++) {
+
+        // hiệu ứng phụ
+        function addTemporaryGlow() {
+            const stage = document.getElementById('lyricStage');
+            if (stage) {
+                stage.style.transition = '0.2s';
+                stage.style.boxShadow = '0 0 20px #ff66aa, inset 0 0 15px rgba(255,100,200,0.3)';
                 setTimeout(() => {
-                    let x = Math.random() * widthFw;
-                    let y = Math.random() * heightFw * 0.6 + 100;
-                    createFirework(x, y);
-                }, i*150);
+                    if (stage) stage.style.boxShadow = '';
+                }, 400);
+            }
+        }
+
+        // Chuyển sang chế độ animation dựa trên nội dung nhập
+        function switchToAnimation() {
+            // Lấy nội dung từ textarea, tách dòng
+            let rawText = lyricInput.value;
+            // tách các dòng, bỏ dòng trống đầu cuối
+            let lines = rawText.split(/\r?\n/);
+            // Lọc bỏ dòng chỉ toàn khoảng trắng
+            lines = lines.filter(line => line.trim().length > 0);
+            
+            if (lines.length === 0) {
+                // Nếu không nhập gì, dùng lời mẫu gợi ý từ bài "Không Buông"
+                lines = [
+                    "🌙 Không buông tay em nhé",
+                    "💖 Dù mai đây cách xa",
+                    "🎵 Vẫn luôn yêu thương này",
+                    "✨ Chẳng thể phai nhòa",
+                    "🔥 Không Buông - Hngle 🔥",
+                    "💫 Trần Minh Tuấn 2k12 lắng nghe!"
+                ];
+                lyricInput.value = lines.join('\n');
+            }
+            
+            lyricsArray = [...lines];
+            currentIndex = 0;
+            
+            // Dừng auto nếu đang chạy trước đó
+            stopAutoPlay();
+            
+            // Ẩn input panel, hiển thị animation panel
+            inputSection.style.display = 'none';
+            animationSection.style.display = 'block';
+            
+            // Hiển thị câu đầu tiên
+            updateLyricDisplay();
+            
+            // Tự động chạy auto play để sinh động liền
+            startAutoPlay();
+            
+            // Thêm hiệu ứng mừng rỡ khi chuyển
+            const stage = document.getElementById('lyricStage');
+            if (stage) {
+                stage.style.transform = 'scale(0.98)';
+                setTimeout(() => { if(stage) stage.style.transform = ''; }, 200);
             }
         }
         
-        const originalPlay = playAudio;
-        window.playAudio = playAudio;
-        playAudio = async function() {
-            burstFireworkOnMusic();
-            await originalPlay();
-        }.bind(this);
+        // Quay lại màn hình nhập lời (giữ nguyên nội dung đã nhập)
+        function backToInput() {
+            stopAutoPlay();
+            inputSection.style.display = 'block';
+            animationSection.style.display = 'none';
+            // reset hiển thị
+            displayLyricDiv.innerText = "✨ Sẵn sàng cho lời nhạc mới ✨";
+            lyricsArray = [];
+            currentIndex = 0;
+        }
         
-        // gắn đè hàm play
-        const superPlay = playAudio;
-        playBtn.removeEventListener('click', togglePlay);
-        const newToggle = () => {
-            if(audio.paused) {
-                burstFireworkOnMusic();
-                playAudio();
+        // Sự kiện nút điều khiển trong animation
+        function nextLine() {
+            if (!lyricsArray.length) return;
+            stopAutoPlay();
+            if (currentIndex + 1 < lyricsArray.length) {
+                currentIndex++;
+                updateLyricDisplay();
             } else {
-                pauseAudio();
+                // vòng lại đầu danh sách
+                currentIndex = 0;
+                updateLyricDisplay();
+                addTemporaryGlow();
             }
-        };
-        playBtn.addEventListener('click', newToggle);
-        // gán lại các nút kèm pháo hoa khi next prev
-        const oldNext = nextTrackFunc;
-        window.nextTrackFunc = function() {
-            burstFireworkOnMusic();
-            oldNext();
-        };
-        const oldPrev = prevTrackFunc;
-        window.prevTrackFunc = function() {
-            burstFireworkOnMusic();
-            oldPrev();
-        };
-        nextBtn.removeEventListener('click', prevTrackFunc);
-        prevBtn.removeEventListener('click', prevTrackFunc);
-        nextBtn.addEventListener('click', () => { burstFireworkOnMusic(); nextTrackFunc(); });
-        prevBtn.addEventListener('click', () => { burstFireworkOnMusic(); prevTrackFunc(); });
+        }
         
-        // khởi tạo mặc định lời nhạc chờ
-        document.getElementById('dynamicLyric').innerText = "✨ Không Buông - Hngle ✨ Chạm play để bùng nổ ✨";
+        function prevLine() {
+            if (!lyricsArray.length) return;
+            stopAutoPlay();
+            if (currentIndex - 1 >= 0) {
+                currentIndex--;
+                updateLyricDisplay();
+            } else {
+                // lên dòng cuối nếu muốn hoặc giữ nguyên
+                currentIndex = lyricsArray.length - 1;
+                updateLyricDisplay();
+                addTemporaryGlow();
+            }
+        }
         
-        // fix volume
-        audio.volume = volumeSlider.value;
+        function toggleAutoPlay() {
+            if (!lyricsArray.length) return;
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        }
         
-        // Bắt đầu hiển thị visualizer vòng lặp ngay cả khi chưa play
-        setTimeout(() => {
-            if(!analyser && audioCtx) setupAudioContext();
-            drawWaveVisualizer();
-        }, 200);
+        // Gán sự kiện các nút
+        runBtn.addEventListener('click', switchToAnimation);
+        backBtn.addEventListener('click', backToInput);
+        nextLineBtn.addEventListener('click', nextLine);
+        prevLineBtn.addEventListener('click', prevLine);
+        playAutoBtn.addEventListener('click', toggleAutoPlay);
         
-        // Để tên tuấn luôn lung linh
-        console.log("Trần Minh Tuấn 2k12 - Pháo hoa & lời nhạc Không Buông cực đỉnh");
+        // Nếu người dùng nhấn phím tắt hoặc muốn trải nghiệm thêm: nhập mẫu sẵn "Không Buông" (gợi ý)
+        // Thiết lập mẫu lời đẹp cho bài Hngle
+        const defaultLyric = `Không buông đôi tay này
+Dù giông tố phủ vây
+Chỉ cần em ở đây
+Là bình yên chốn này
+
+Hngle ơi, không buông
+Giữ mãi trong tim
+Tình yêu như ánh sáng
+Xua tan màn đêm đen`;
+        
+        lyricInput.value = defaultLyric;
+        
+        // thêm hiệu ứng nhấn nút gợi cảm giác
+        const allBtns = document.querySelectorAll('button');
+        allBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                btn.style.transform = 'scale(0.96)';
+                setTimeout(() => { btn.style.transform = ''; }, 120);
+            });
+        });
+        
+        // tự động focus vào text nếu cần
+        lyricInput.focus();
+        
+        // đảm bảo khi quay lại từ animation, có thể tiếp tục nhập lời mới
+        window.addEventListener('load', () => {
+            // kiểm tra nếu có sẵn lời nhạc hay chưa
+            console.log("Ready - Trần Minh Tuấn 2k12 - Animation lời nhạc siêu cấp");
+        });
+        
+        // thêm hiệu ứng nền động nhẹ di chuyển theo chuột (optional siêu nhẹ)
+        document.body.addEventListener('mousemove', (e) => {
+            const orbs = document.querySelectorAll('.orb');
+            if (orbs.length) {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                orbs[0].style.transform = `translate(${x * 15}px, ${y * 10}px)`;
+                if(orbs[1]) orbs[1].style.transform = `translate(${-x * 12}px, ${-y * 8}px)`;
+            }
+        });
     })();
 </script>
 </body>
