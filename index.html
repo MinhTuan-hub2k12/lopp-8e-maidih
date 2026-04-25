@@ -2,589 +2,692 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8E Social - Mạng xã hội lớp 8E</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Trần Minh Tuấn 2k12 | Visualizer đẹp & Nhạc Không Buông</title>
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #1e1f22; }
-        
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1e1f22; }
-        ::-webkit-scrollbar-thumb { background: #2b2d31; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #5865F2; }
-        
-        .server-icon, .channel-item, .friend-card, .message, .post-card {
-            transition: all 0.2s ease;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-        .server-icon:hover, .channel-item:hover, .friend-card:hover, .message:hover, .post-card:hover {
-            transform: translateX(2px);
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0a0f2a, #03050b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, 'Montserrat', sans-serif;
+            overflow: hidden;
+            position: relative;
         }
-        .channel-active { background: #2b2d31; border-left: 3px solid #5865F2; }
-        .online-dot { background: #23a55a; box-shadow: 0 0 0 2px #1e1f22; }
-        .offline-dot { background: #80848e; box-shadow: 0 0 0 2px #1e1f22; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        /* hiệu ứng nền động (hạt sao & khói màu) */
+        .bg-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.8);
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 1px, transparent 2px);
+            background-size: 40px 40px;
+            animation: starMove 40s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes starMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 100px); }
+        }
+
+        .glow-orb {
+            position: absolute;
+            width: 50vmax;
+            height: 50vmax;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.15), rgba(255, 0, 255, 0));
+            border-radius: 50%;
+            top: -20%;
+            left: -20%;
+            filter: blur(80px);
+            animation: floatGlow 12s infinite alternate ease-in-out;
+        }
+
+        .glow-orb2 {
+            bottom: -20%;
+            right: -20%;
+            top: auto;
+            left: auto;
+            background: radial-gradient(circle, rgba(255, 100, 200, 0.2), rgba(0, 200, 255, 0));
+            animation: floatGlow2 15s infinite alternate;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+            100% { transform: translate(10%, 10%) scale(1.3); opacity: 0.8; }
+        }
+        @keyframes floatGlow2 {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            100% { transform: translate(-8%, -12%) scale(1.4); opacity: 0.7; }
+        }
+
+        /* Card chính */
+        .music-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(10, 20, 35, 0.55);
+            backdrop-filter: blur(20px);
+            border-radius: 56px;
+            padding: 1.8rem 2rem;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Header tên + hiệu ứng */
+        .name-glow {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .main-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD166, #FF6AC2, #6C5CE7);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shimmer 3s linear infinite, textGlow 1.8s ease-in-out infinite alternate;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(255,105,180,0.5);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 2px #fff, 0 0 5px #ff66cc; }
+            100% { text-shadow: 0 0 12px #ff44aa, 0 0 20px #a55eff; }
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(8px);
+            border-radius: 100px;
+            padding: 6px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #ffeecc;
+            margin-top: 6px;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255,215,0,0.4);
         }
-        .modal-content {
-            animation: fadeIn 0.2s ease-out;
+
+        /* visualizer canvas */
+        .visualizer-container {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 40px;
+            margin: 20px 0;
+            padding: 12px;
+            backdrop-filter: blur(4px);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.2);
         }
-        
-        .mention { background: #5865F2; color: white; border-radius: 4px; padding: 0 4px; }
-        .setting-item:hover { background: #2b2d31; }
-        
-        .status-selector { transition: all 0.2s ease; }
-        .status-selector:hover { transform: scale(1.05); }
+
+        canvas {
+            width: 100%;
+            display: block;
+            border-radius: 32px;
+            background: #01041a;
+            box-shadow: 0 0 20px rgba(0,255,255,0.2);
+            transition: all 0.2s;
+        }
+
+        /* controls */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin: 20px 0 15px;
+        }
+
+        .ctrl-btn {
+            background: rgba(255,255,240,0.1);
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 60px;
+            font-size: 28px;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            transition: 0.2s;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ctrl-btn:hover {
+            transform: scale(1.07);
+            background: rgba(255,200,200,0.3);
+            box-shadow: 0 0 15px #ff99ff;
+        }
+
+        .play-pause {
+            background: linear-gradient(145deg, #ff4da6, #c53a8a);
+            box-shadow: 0 0 15px #ff66aa;
+            width: 70px;
+            height: 70px;
+            font-size: 36px;
+        }
+
+        .song-info {
+            text-align: center;
+            margin-top: 12px;
+            font-weight: 500;
+            background: rgba(0,0,0,0.4);
+            padding: 8px 12px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            font-size: 0.9rem;
+        }
+
+        .song-title {
+            color: #ffe3b3;
+            letter-spacing: 1px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .wave-icon {
+            display: inline-block;
+            animation: pulseWave 1s infinite;
+        }
+
+        @keyframes pulseWave {
+            0% { opacity: 0.4; text-shadow: 0 0 0px; }
+            100% { opacity: 1; text-shadow: 0 0 8px cyan; }
+        }
+
+        .volume-slider {
+            width: 120px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.4);
+            padding: 6px 12px;
+            border-radius: 60px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            background: #ff99cc;
+            height: 4px;
+            border-radius: 10px;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #ff66cc;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 6px white;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 20px;
+            color: #bbaaee;
+        }
+
+        @media (max-width: 550px) {
+            .music-card { padding: 1.2rem; }
+            .main-name { font-size: 1.6rem; }
+            .ctrl-btn { width: 48px; height: 48px; font-size: 24px; }
+            .play-pause { width: 60px; height: 60px; font-size: 32px; }
+        }
     </style>
 </head>
 <body>
-    <div id="app"></div>
+<div class="bg-effect">
+    <div class="stars"></div>
+    <div class="glow-orb"></div>
+    <div class="glow-orb glow-orb2"></div>
+</div>
 
-    <script>
-        // ==================== DATA ====================
-        let currentUser = null;
-        let users = [];
-        let servers = [];
-        let posts = [];
-        let messages = [];
-        let friendRequests = [];
-        let currentServer = null;
-        let currentChannel = null;
-        let currentView = 'welcome';
-        let onlineUsers = new Set();
+<div class="music-card">
+    <div class="name-glow">
+        <div class="main-name">✨ Trần Minh Tuấn 2k12 ✨</div>
+        <div class="badge">⚡ ENERGY X VISUALIZER ⚡</div>
+    </div>
+
+    <div class="visualizer-container">
+        <canvas id="visualizerCanvas" width="800" height="280" style="width:100%; height:auto; aspect-ratio:800/280"></canvas>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn" id="prevBtn" title="Bài trước">⏮️</button>
+        <button class="ctrl-btn play-pause" id="playPauseBtn">▶️</button>
+        <button class="ctrl-btn" id="nextBtn" title="Bài tiếp">⏭️</button>
+    </div>
+
+    <div class="song-info">
+        <div class="song-title">
+            <span class="wave-icon">🎵</span> 
+            <span id="songNameDisplay">Không Buông - Tình ca 2k12</span>
+            <span class="wave-icon">🎧</span>
+        </div>
+        <div class="volume-slider">
+            <span>🔊</span>
+            <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.7">
+        </div>
+    </div>
+    <div class="footer-note">
+        ✨ Hiệu ứng nhạc lung linh | Dành riêng cho Tuấn 2k12 ✨
+    </div>
+</div>
+
+<script>
+    (function(){
+        // -------- danh sách nhạc (các bài “Không Buông” những giai điệu sôi động, lo-fi và vibe) 
+        // Sử dụng các nguồn audio từ bộ sưu tập online cho phép nhúng miễn phí (demo sử dụng file mẫu từ các nguồn creative commons)
+        // Nhưng để trải nghiệm tốt, tôi dùng các bài nhạc không bản quyền phong cách "Không Buông" - tạo cảm giác trẻ trung
+        // Lưu ý: Đường dẫn sử dụng các file âm thanh từ server hỗ trợ CORS, nhưng để chắc chắn auto-play, dùng audio context cần user tương tác.
+        // Tuy nhiên chúng ta có thể dùng thủ thuật: nhấn play lần đầu sẽ kích hoạt tất cả. Auto-play bị hạn chế nhưng có nút bấm.
+        // Bài hát mô phỏng tựa đề "Không Buông" (remix)
         
-        // Load data
-        function loadData() {
-            try {
-                const savedUser = localStorage.getItem('8e_currentUser');
-                currentUser = savedUser && savedUser !== 'null' ? JSON.parse(savedUser) : null;
-                users = JSON.parse(localStorage.getItem('8e_users') || '[]');
-                servers = JSON.parse(localStorage.getItem('8e_servers') || '[]');
-                posts = JSON.parse(localStorage.getItem('8e_posts') || '[]');
-                messages = JSON.parse(localStorage.getItem('8e_messages') || '[]');
-                friendRequests = JSON.parse(localStorage.getItem('8e_friendRequests') || '[]');
+        const playlist = [
+            { name: "🎧 Không Buông (Remix 2k12) 🎧", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+            { name: "💥 Không Buông - Tuấn 2k12 Tập 2 💥", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+            { name: "✨ Không Buông (EDM Ver) ✨", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+        ];
+        
+        let currentTrack = 0;
+        let audio = new Audio();
+        audio.crossOrigin = "Anonymous"; // để phân tích dữ liệu tần số
+        let audioContext = null;
+        let analyser = null;
+        let sourceNode = null;
+        let isAudioContextReady = false;
+        let animationId = null;
+        let canvas = document.getElementById('visualizerCanvas');
+        let ctx = canvas.getContext('2d');
+        
+        // DOM elements
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const songNameDisplay = document.getElementById('songNameDisplay');
+        const volumeSlider = document.getElementById('volumeControl');
+        
+        // Cập nhật tên bài
+        function updateSongInfo() {
+            songNameDisplay.innerText = playlist[currentTrack].name;
+        }
+        
+        // Setup AudioContext và Analyser
+        function setupAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                analyser.connect(audioContext.destination);
+            }
+            if (sourceNode) {
+                try {
+                    sourceNode.disconnect();
+                } catch(e) {}
+            }
+            sourceNode = audioContext.createMediaElementSource(audio);
+            sourceNode.connect(analyser);
+            analyser.connect(audioContext.destination);
+            isAudioContextReady = true;
+        }
+        
+        // Hàm tải và phát nhạc
+        function loadTrack(index) {
+            const track = playlist[index];
+            audio.pause();
+            audio.src = track.url;
+            audio.load();
+            audio.volume = volumeSlider.value;
+            updateSongInfo();
+            // Nếu audio context đã được setup và resume, cố gắng phát
+            if (audioContext && audioContext.state === 'running') {
+                audio.play().catch(e => console.log("autoplay blocked, click play"));
+            }
+            // reset visualizer buffer sẽ đẹp
+        }
+        
+        // Phát nhạc & resume audio context
+        async function playMusic() {
+            if (!audioContext) {
+                setupAudioContext();
+            }
+            if (audioContext && audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+            if (!isAudioContextReady && audioContext) {
+                setupAudioContext();
+                await audioContext.resume();
+            }
+            await audio.play().catch(err => {
+                console.warn("Playback error:", err);
+                // thử fallback: do trình duyệt chặn, nhưng có thể người dùng click
+            });
+            playPauseBtn.innerHTML = '⏸️';
+        }
+        
+        function pauseMusic() {
+            audio.pause();
+            playPauseBtn.innerHTML = '▶️';
+        }
+        
+        function togglePlayPause() {
+            if (audio.paused) {
+                playMusic();
+            } else {
+                pauseMusic();
+            }
+        }
+        
+        function nextTrack() {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            loadTrack(currentTrack);
+            if (!audio.paused) {
+                playMusic();
+            } else {
+                // nếu đang dừng, chỉ load xong chờ play
+                updateSongInfo();
+            }
+        }
+        
+        function prevTrack() {
+            currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+            loadTrack(currentTrack);
+            if (!audio.paused) {
+                playMusic();
+            } else {
+                updateSongInfo();
+            }
+        }
+        
+        // Volume
+        volumeSlider.addEventListener('input', (e) => {
+            audio.volume = parseFloat(e.target.value);
+        });
+        
+        // Sự kiện nút
+        playPauseBtn.addEventListener('click', togglePlayPause);
+        prevBtn.addEventListener('click', prevTrack);
+        nextBtn.addEventListener('click', nextTrack);
+        
+        audio.addEventListener('ended', () => {
+            nextTrack();
+        });
+        
+        audio.addEventListener('play', () => {
+            playPauseBtn.innerHTML = '⏸️';
+        });
+        
+        audio.addEventListener('pause', () => {
+            playPauseBtn.innerHTML = '▶️';
+        });
+        
+        // Khởi tạo track đầu tiên
+        loadTrack(0);
+        
+        // visualizer logic với hiệu ứng đẹp, nhạc không buông vibe
+        let dataArray = new Uint8Array(0);
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const containerWidth = container.clientWidth;
+            canvas.width = Math.min(containerWidth * 0.95, 800);
+            canvas.height = 280;
+            const w = canvas.width;
+            const h = canvas.height;
+            canvas.style.width = `${w}px`;
+            canvas.style.height = `${h}px`;
+        }
+        window.addEventListener('resize', () => resizeCanvas());
+        
+        function initVisualizer() {
+            if (!analyser) {
+                requestAnimationFrame(drawWaiting);
+                return;
+            }
+            analyser.fftSize = 256;
+            const bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+            drawVisualizer();
+        }
+        
+        function drawVisualizer() {
+            if (!analyser || !canvas || !ctx) {
+                requestAnimationFrame(drawWaiting);
+                return;
+            }
+            analyser.getByteFrequencyData(dataArray);
+            const width = canvas.width;
+            const height = canvas.height;
+            if (width === 0) return;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // gradient nền tuyệt đẹp
+            const gradientBg = ctx.createLinearGradient(0, 0, width, height);
+            gradientBg.addColorStop(0, '#020617');
+            gradientBg.addColorStop(1, '#0a1128');
+            ctx.fillStyle = gradientBg;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Hiệu ứng ánh sáng bokeh
+            ctx.shadowBlur = 0;
+            const barCount = dataArray.length;
+            const barWidth = width / barCount * 1.2;
+            let x = 0;
+            
+            // giá trị trung bình để tạo màu động
+            let avg = 0;
+            for (let i = 0; i < barCount; i++) avg += dataArray[i];
+            avg /= barCount;
+            const intensity = Math.min(1, avg / 180);
+            
+            for (let i = 0; i < barCount; i++) {
+                const value = dataArray[i];
+                const percent = value / 255;
+                // chiều cao cột (đẹp hơn với phóng đại)
+                let barHeight = percent * height * 0.8;
+                if (barHeight < 2) barHeight = 2;
                 
-                // Update online status for current user
-                if (currentUser) {
-                    onlineUsers.add(currentUser.id);
-                    updateOnlineStatus();
+                // màu sắc gradient theo tần số và cường độ
+                const hue = (i * 0.8 + Date.now() * 0.01) % 360;
+                const sat = 70 + intensity * 30;
+                let lightness = 55 + percent * 35;
+                let color = `hsl(${hue}, ${sat}%, ${lightness}%)`;
+                
+                // tạo hiệu ứng glowing
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = `hsl(${hue}, 80%, 65%)`;
+                ctx.fillStyle = color;
+                const rectX = x;
+                const rectY = height - barHeight;
+                ctx.fillRect(rectX, rectY, barWidth - 0.8, barHeight);
+                
+                // thêm hạt phát sáng trên đỉnh cột
+                ctx.fillStyle = `rgba(255, 240, 200, ${percent * 0.8})`;
+                ctx.beginPath();
+                ctx.arc(rectX + (barWidth - 0.8)/2, rectY - 2, 3 * percent + 1, 0, Math.PI*2);
+                ctx.fill();
+                
+                x += barWidth;
+            }
+            ctx.shadowBlur = 0;
+            
+            // thêm lớp sóng lấp lánh (đường cong phản chiếu)
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 180, 255, 0.4)`;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < barCount; i+=3) {
+                const value = dataArray[i];
+                const yPos = height - (value/255) * height * 0.5;
+                if(i===0) ctx.moveTo(i*barWidth, yPos);
+                else ctx.lineTo(i*barWidth, yPos);
+            }
+            ctx.stroke();
+            
+            // thêm hiệu ứng particle xung quanh
+            if (avg > 80) {
+                ctx.fillStyle = `rgba(255, 100, 200, 0.3)`;
+                for (let s=0; s<12; s++) {
+                    ctx.beginPath();
+                    ctx.arc(Math.random()*width, Math.random()*height, Math.random()*5+2, 0, Math.PI*2);
+                    ctx.fill();
                 }
-            } catch(e) { console.error('Load error:', e); }
+            }
+            
+            // dòng chữ "KHÔNG BUÔNG" nhấp nháy theo nhịp
+            ctx.font = `bold ${Math.floor(18 + intensity * 12)}px "Poppins"`;
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = "#ff44ee";
+            ctx.fillStyle = `rgba(255, 220, 150, ${0.5+intensity*0.5})`;
+            ctx.textAlign = "center";
+            ctx.fillText("✨ KHÔNG BUÔNG ✨", width/2, height - 12);
+            ctx.textAlign = "left";
+            ctx.shadowBlur = 0;
+            
+            requestAnimationFrame(drawVisualizer);
         }
         
-        function saveData() {
-            try {
-                localStorage.setItem('8e_currentUser', JSON.stringify(currentUser));
-                localStorage.setItem('8e_users', JSON.stringify(users));
-                localStorage.setItem('8e_servers', JSON.stringify(servers));
-                localStorage.setItem('8e_posts', JSON.stringify(posts));
-                localStorage.setItem('8e_messages', JSON.stringify(messages));
-                localStorage.setItem('8e_friendRequests', JSON.stringify(friendRequests));
-            } catch(e) { console.error('Save error:', e); }
+        function drawWaiting() {
+            if (!canvas) return;
+            const width = canvas.width;
+            const height = canvas.height;
+            if(width === 0) {
+                resizeCanvas();
+            }
+            ctx.fillStyle = '#01041a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = 'bold 18px "Poppins"';
+            ctx.fillStyle = '#88aaff';
+            ctx.textAlign = "center";
+            ctx.fillText("🎤 Chạm play để bùng nổ giai điệu 🎤", canvas.width/2, canvas.height/2);
+            ctx.textAlign = "left";
+            requestAnimationFrame(drawWaiting);
         }
         
-        function updateOnlineStatus() {
+        // khởi tạo canvas
+        resizeCanvas();
+        
+        // Cập nhật analyser khi audio context sẵn sàng
+        audio.addEventListener('canplaythrough', () => {
+            if (!audioContext) {
+                setupAudioContext();
+            }
+            if (analyser) {
+                if (dataArray.length === 0) {
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                }
+                initVisualizer();
+            } else {
+                setTimeout(() => {
+                    if(!analyser && audioContext) setupAudioContext();
+                    initVisualizer();
+                }, 100);
+            }
+        });
+        
+        // thêm fallback khi người dùng tương tác, kích hoạt ctx và phân tích
+        document.body.addEventListener('click', function initAudioOnFirstClick() {
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    if(audio.paused === false) {
+                        // đang play ok
+                    } else {
+                        // có thể chủ động không auto play, để người dùng bấm nút
+                    }
+                });
+            }
+            if (!analyser && audioContext) {
+                setupAudioContext();
+                initVisualizer();
+            }
+        }, { once: false });
+        
+        // lắng nghe audio playing -> chắc chắn visualizer chạy
+        audio.addEventListener('play', () => {
+            if (!analyser && audioContext) {
+                setupAudioContext();
+                initVisualizer();
+            } else if (analyser && dataArray.length===0){
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                drawVisualizer();
+            } else if (!animationId && analyser){
+                drawVisualizer();
+            }
+        });
+        
+        // khởi tạo visualizer mặc định (chờ)
+        drawWaiting();
+        
+        // Thêm hiệu ứng khi hover, thay đổi màu
+        setInterval(() => {
+            if (analyser && !audio.paused) {
+                // chỉ để tạo hiệu ứng màu sắc giao động
+            }
+        }, 50);
+        
+        // load lại track nếu fail url => next
+        audio.addEventListener('error', () => {
+            console.log("lỗi tải nhạc, chuyển bài");
+            nextTrack();
+        });
+        
+        // khởi tạo volume
+        audio.volume = volumeSlider.value;
+        
+        // kích hoạt tên hiệu ứng name + animate
+        const nameDiv = document.querySelector('.main-name');
+        if(nameDiv) {
             setInterval(() => {
-                if (currentUser) {
-                    onlineUsers.add(currentUser.id);
-                    renderApp();
+                if(!audio.paused) {
+                    nameDiv.style.animation = 'none';
+                    setTimeout(() => { nameDiv.style.animation = 'shimmer 3s linear infinite, textGlow 1.8s ease-in-out infinite alternate'; }, 10);
                 }
-            }, 30000);
+            }, 2000);
         }
-        
-        function isOnline(userId) { return onlineUsers.has(userId); }
-        function formatTime(ts) {
-            const d = new Date(ts), now = new Date(), diff = now - d;
-            if (diff < 60000) return 'vừa xong';
-            if (diff < 3600000) return `${Math.floor(diff/60000)} phút trước`;
-            if (diff < 86400000) return `${Math.floor(diff/3600000)} giờ trước`;
-            return d.toLocaleDateString('vi-VN');
-        }
-        function getUserById(id) { return users.find(u => u.id === id); }
-        function isFriend(uid) { return currentUser?.friends?.includes(uid) || false; }
-        function hasSentRequest(tid) { return friendRequests.some(r => r.fromUserId === currentUser?.id && r.toUserId === tid && r.status === 'pending'); }
-        function hasReceivedRequest(fid) { return friendRequests.some(r => r.fromUserId === fid && r.toUserId === currentUser?.id && r.status === 'pending'); }
-        function escapeHtml(t) { const div = document.createElement('div'); div.textContent = t; return div.innerHTML; }
-        
-        // ==================== AUTH ====================
-        function handleRegister(e) {
-            e.preventDefault();
-            const fullName = document.getElementById('regFullName')?.value.trim();
-            const username = document.getElementById('regUsername')?.value.trim();
-            const password = document.getElementById('regPassword')?.value;
-            const confirm = document.getElementById('regConfirmPassword')?.value;
-            if (!fullName || !username || !password) return alert('❌ Vui lòng nhập đầy đủ!');
-            if (password !== confirm) return alert('❌ Mật khẩu không khớp!');
-            if (password.length < 4) return alert('❌ Mật khẩu >= 4 ký tự!');
-            if (users.find(u => u.username === username)) return alert('❌ Tên đăng nhập đã tồn tại!');
-            
-            const newUser = {
-                id: Date.now().toString(),
-                fullName, username, password,
-                avatar: `https://ui-avatars.com/api/?background=5865F2&color=fff&name=${encodeURIComponent(fullName)}`,
-                bio: 'Học sinh lớp 8E 🎓', background: '#5865F2',
-                friends: [], servers: [], status: 'online',
-                createdAt: new Date().toISOString()
-            };
-            users.push(newUser);
-            saveData();
-            alert('✅ Đăng ký thành công!');
-            currentView = 'login';
-            renderApp();
-        }
-        
-        function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('loginUsername')?.value.trim();
-            const password = document.getElementById('loginPassword')?.value;
-            const user = users.find(u => u.username === username && u.password === password);
-            if (!user) return alert('❌ Sai tài khoản hoặc mật khẩu!');
-            
-            currentUser = { ...user };
-            delete currentUser.password;
-            onlineUsers.add(currentUser.id);
-            saveData();
-            currentView = 'feed';
-            renderApp();
-        }
-        
-        function logout() {
-            if (currentUser) onlineUsers.delete(currentUser.id);
-            currentUser = null;
-            saveData();
-            currentView = 'welcome';
-            renderApp();
-        }
-        
-        // ==================== FRIENDS ====================
-        function sendFriendRequest(userId) {
-            if (!currentUser) return;
-            if (isFriend(userId)) return alert('Đã là bạn bè!');
-            if (hasSentRequest(userId)) return alert('Đã gửi lời mời!');
-            friendRequests.push({ id: Date.now().toString(), fromUserId: currentUser.id, toUserId: userId, status: 'pending', createdAt: new Date().toISOString() });
-            saveData();
-            renderApp();
-        }
-        
-        function acceptFriendRequest(requestId, fromUserId) {
-            friendRequests = friendRequests.filter(r => r.id !== requestId);
-            const cu = users.find(u => u.id === currentUser.id);
-            const fu = users.find(u => u.id === fromUserId);
-            if (!cu.friends) cu.friends = [];
-            if (!fu.friends) fu.friends = [];
-            cu.friends.push(fromUserId);
-            fu.friends.push(currentUser.id);
-            currentUser = { ...cu }; delete currentUser.password;
-            saveData();
-            renderApp();
-        }
-        
-        function rejectFriendRequest(requestId) {
-            friendRequests = friendRequests.filter(r => r.id !== requestId);
-            saveData();
-            renderApp();
-        }
-        
-        // ==================== SERVERS ====================
-        function createServer() {
-            if (!currentUser) return;
-            const name = prompt('🏷️ Tên server:', `Server của ${currentUser.fullName}`);
-            if (!name) return;
-            const inviteCode = Math.random().toString(36).substring(2, 10).toUpperCase();
-            const newServer = {
-                id: Date.now().toString(), name, ownerId: currentUser.id,
-                members: [currentUser.id], inviteCode,
-                channels: [{ id: 'general', name: 'chung' }, { id: 'announcements', name: 'thông-báo' }],
-                messages: [], settings: { defaultNotifications: true, everyoneMention: true },
-                createdAt: new Date().toISOString()
-            };
-            servers.push(newServer);
-            const ud = users.find(u => u.id === currentUser.id);
-            if (!ud.servers) ud.servers = [];
-            ud.servers.push(newServer.id);
-            currentUser = { ...ud }; delete currentUser.password;
-            saveData();
-            alert(`✅ Tạo server "${name}"!\n🔗 Mã mời: ${inviteCode}`);
-            currentServer = newServer;
-            currentChannel = 'general';
-            currentView = 'server';
-            renderApp();
-        }
-        
-        function joinServerByCode() {
-            const code = prompt('🔑 Nhập mã mời:');
-            if (!code) return;
-            const server = servers.find(s => s.inviteCode === code.toUpperCase());
-            if (!server) return alert('❌ Mã không hợp lệ!');
-            if (server.members.includes(currentUser.id)) return alert('Đã ở trong server!');
-            server.members.push(currentUser.id);
-            const ud = users.find(u => u.id === currentUser.id);
-            if (!ud.servers) ud.servers = [];
-            ud.servers.push(server.id);
-            currentUser = { ...ud }; delete currentUser.password;
-            saveData();
-            alert(`✅ Đã tham gia "${server.name}"!`);
-            currentServer = server;
-            currentChannel = 'general';
-            currentView = 'server';
-            renderApp();
-        }
-        
-        function updateServerSettings() {
-            const server = servers.find(s => s.id === currentServer?.id);
-            if (!server || server.ownerId !== currentUser.id) return;
-            const notif = document.getElementById('setting_notifications')?.checked;
-            const mention = document.getElementById('setting_mention')?.checked;
-            if (notif !== undefined) server.settings.defaultNotifications = notif;
-            if (mention !== undefined) server.settings.everyoneMention = mention;
-            saveData();
-            alert('✅ Đã lưu cài đặt!');
-            renderApp();
-        }
-        
-        function sendServerMessage() {
-            const input = document.getElementById('serverMessageInput');
-            if (!input) return;
-            const content = input.value.trim();
-            if (!content) return;
-            const server = servers.find(s => s.id === currentServer?.id);
-            if (!server) return;
-            let processed = content;
-            const mentions = content.match(/@(\w+)/g) || [];
-            mentions.forEach(m => {
-                const uname = m.substring(1);
-                const user = users.find(u => u.username === uname);
-                if (user && server.members.includes(user.id))
-                    processed = processed.replace(m, `<span class="mention">@${uname}</span>`);
-            });
-            server.messages.push({
-                id: Date.now().toString(), userId: currentUser.id, userName: currentUser.fullName,
-                userAvatar: currentUser.avatar, content: processed, rawContent: content,
-                channelId: currentChannel, timestamp: new Date().toISOString()
-            });
-            saveData();
-            input.value = '';
-            renderApp();
-            setTimeout(() => {
-                const c = document.getElementById('serverMessages');
-                if (c) c.scrollTop = c.scrollHeight;
-            }, 100);
-        }
-        
-        // ==================== POSTS ====================
-        function createPost(content) {
-            if (!content.trim()) return;
-            posts.unshift({
-                id: Date.now().toString(), userId: currentUser.id, userName: currentUser.fullName,
-                userAvatar: currentUser.avatar, content, likes: [], comments: [],
-                createdAt: new Date().toISOString()
-            });
-            saveData();
-            renderApp();
-        }
-        
-        function likePost(pid) {
-            const p = posts.find(po => po.id === pid);
-            if (!p) return;
-            if (p.likes.includes(currentUser.id)) p.likes = p.likes.filter(id => id !== currentUser.id);
-            else p.likes.push(currentUser.id);
-            saveData();
-            renderApp();
-        }
-        
-        function addComment(pid, content) {
-            if (!content.trim()) return;
-            const p = posts.find(po => po.id === pid);
-            if (!p) return;
-            p.comments.push({
-                id: Date.now().toString(), userId: currentUser.id, userName: currentUser.fullName,
-                userAvatar: currentUser.avatar, content, createdAt: new Date().toISOString()
-            });
-            saveData();
-            renderApp();
-        }
-        
-        // ==================== PROFILE ====================
-        function updateProfile() {
-            const bio = document.getElementById('editBio')?.value;
-            const name = document.getElementById('editFullName')?.value;
-            const avatar = document.getElementById('editAvatar')?.value;
-            const bg = document.getElementById('editBackground')?.value;
-            if (name) currentUser.fullName = name;
-            if (bio) currentUser.bio = bio;
-            if (avatar && avatar.trim()) currentUser.avatar = avatar;
-            if (bg && bg.trim()) currentUser.background = bg;
-            const ud = users.find(u => u.id === currentUser.id);
-            if (ud) { ud.fullName = currentUser.fullName; ud.bio = currentUser.bio; ud.avatar = currentUser.avatar; ud.background = currentUser.background; }
-            saveData();
-            alert('✅ Cập nhật thành công!');
-            currentView = 'profile';
-            renderApp();
-        }
-        
-        function updateStatus(status) {
-            currentUser.status = status;
-            const ud = users.find(u => u.id === currentUser.id);
-            if (ud) ud.status = status;
-            saveData();
-            renderApp();
-        }
-        
-        // ==================== UI COMPONENTS ====================
-        function WelcomeScreen() {
-            return `<div class="min-h-screen bg-gradient-to-br from-[#5865F2] to-[#4752C4] flex items-center justify-center p-4">
-                <div class="max-w-md w-full text-center fade-in">
-                    <div class="text-7xl mb-6">🎓</div>
-                    <h1 class="text-4xl font-bold text-white mb-2">8E Social</h1>
-                    <p class="text-white/80 mb-8">Mạng xã hội dành riêng cho lớp 8E</p>
-                    <div class="space-y-3">
-                        <button id="loginBtn" class="w-full bg-white text-[#5865F2] py-3 rounded-xl font-semibold hover:shadow-lg">Đăng nhập</button>
-                        <button id="registerBtn" class="w-full bg-transparent border-2 border-white text-white py-3 rounded-xl font-semibold hover:bg-white/10">Đăng ký</button>
-                    </div>
-                </div>
-            </div>`;
-        }
-        
-        function LoginScreen() {
-            return `<div class="min-h-screen bg-gradient-to-br from-[#5865F2] to-[#4752C4] flex items-center justify-center p-4">
-                <div class="bg-[#2b2d31] rounded-2xl p-8 w-full max-w-md fade-in">
-                    <h2 class="text-2xl font-bold text-white text-center mb-6">Đăng nhập</h2>
-                    <form id="loginForm">
-                        <input type="text" id="loginUsername" placeholder="Tên đăng nhập" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-3 outline-none focus:ring-2 focus:ring-[#5865F2]">
-                        <input type="password" id="loginPassword" placeholder="Mật khẩu" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-4 outline-none focus:ring-2 focus:ring-[#5865F2]">
-                        <button type="submit" class="w-full bg-[#5865F2] text-white py-3 rounded-lg font-semibold hover:bg-[#4752C4]">Đăng nhập</button>
-                    </form>
-                    <p class="text-center text-gray-400 mt-4">Chưa có tài khoản? <button id="switchToRegister" class="text-[#5865F2]">Đăng ký</button></p>
-                </div>
-            </div>`;
-        }
-        
-        function RegisterScreen() {
-            return `<div class="min-h-screen bg-gradient-to-br from-[#5865F2] to-[#4752C4] flex items-center justify-center p-4">
-                <div class="bg-[#2b2d31] rounded-2xl p-8 w-full max-w-md fade-in">
-                    <h2 class="text-2xl font-bold text-white text-center mb-6">Đăng ký</h2>
-                    <form id="registerForm">
-                        <input type="text" id="regFullName" placeholder="Họ và tên" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-3 outline-none focus:ring-2 focus:ring-[#5865F2]">
-                        <input type="text" id="regUsername" placeholder="Tên đăng nhập" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-3 outline-none focus:ring-2 focus:ring-[#5865F2]">
-                        <input type="password" id="regPassword" placeholder="Mật khẩu" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-3 outline-none focus:ring-2 focus:ring-[#5865F2]">
-                        <input type="password" id="regConfirmPassword" placeholder="Xác nhận mật khẩu" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-4 outline-none focus:ring-2 focus:ring-[#5865F2]">
-                        <button type="submit" class="w-full bg-[#5865F2] text-white py-3 rounded-lg font-semibold hover:bg-[#4752C4]">Đăng ký</button>
-                    </form>
-                    <p class="text-center text-gray-400 mt-4">Đã có tài khoản? <button id="switchToLogin" class="text-[#5865F2]">Đăng nhập</button></p>
-                </div>
-            </div>`;
-        }
-        
-        function ProfileView() {
-            const myPosts = posts.filter(p => p.userId === currentUser.id);
-            const friends = users.filter(u => currentUser.friends?.includes(u.id));
-            return `<div class="min-h-screen bg-[#1e1f22]">
-                <div class="bg-[#2b2d31] sticky top-0 z-10 px-4 py-3 flex items-center justify-between">
-                    <button id="backToFeed" class="text-gray-400 hover:text-white"><i class="fas fa-arrow-left text-xl"></i></button>
-                    <div class="text-xl font-bold bg-gradient-to-r from-[#5865F2] to-[#EB459E] bg-clip-text text-transparent">8E Social</div>
-                    <button id="logoutBtn" class="text-gray-400 hover:text-white"><i class="fas fa-sign-out-alt text-xl"></i></button>
-                </div>
-                <div class="relative">
-                    <div class="h-64 bg-cover bg-center" style="background-image: url('${currentUser.background || '#5865F2'}'); background-color: #5865F2;"></div>
-                    <div class="absolute -bottom-16 left-8 flex gap-4 items-end">
-                        <img src="${currentUser.avatar}" class="w-32 h-32 rounded-full border-4 border-[#1e1f22] object-cover">
-                        <div class="mb-2 flex gap-2">
-                            <button class="edit-profile-btn px-4 py-2 bg-[#2b2d31] text-white rounded-full text-sm hover:bg-[#3b3d41]"><i class="fas fa-edit"></i> Chỉnh sửa</button>
-                            <div class="relative group">
-                                <button class="px-4 py-2 bg-[#2b2d31] text-white rounded-full text-sm"><i class="fas fa-circle ${currentUser.status === 'online' ? 'text-green-500' : currentUser.status === 'idle' ? 'text-yellow-500' : 'text-gray-500'}"></i> Trạng thái</button>
-                                <div class="absolute top-full mt-1 bg-[#2b2d31] rounded-lg shadow-lg hidden group-hover:block z-20">
-                                    <button class="set-status w-full px-4 py-2 text-left text-sm hover:bg-[#1e1f22] text-white" data-status="online"><i class="fas fa-circle text-green-500"></i> Online</button>
-                                    <button class="set-status w-full px-4 py-2 text-left text-sm hover:bg-[#1e1f22] text-white" data-status="idle"><i class="fas fa-circle text-yellow-500"></i> Idle</button>
-                                    <button class="set-status w-full px-4 py-2 text-left text-sm hover:bg-[#1e1f22] text-white" data-status="offline"><i class="fas fa-circle text-gray-500"></i> Offline</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-20 px-4 max-w-4xl mx-auto">
-                    <div class="bg-[#2b2d31] rounded-xl p-6 mb-6">
-                        <h1 class="text-2xl font-bold text-white">${currentUser.fullName}</h1>
-                        <p class="text-gray-400">@${currentUser.username}</p>
-                        <p class="text-gray-300 mt-2">${currentUser.bio}</p>
-                        <div class="flex gap-6 mt-4 pt-4 border-t border-[#1e1f22]">
-                            <div><span class="font-bold text-white">${friends.length}</span> <span class="text-gray-400">bạn bè</span></div>
-                            <div><span class="font-bold text-white">${currentUser.servers?.length || 0}</span> <span class="text-gray-400">server</span></div>
-                            <div><span class="font-bold text-white">${myPosts.length}</span> <span class="text-gray-400">bài viết</span></div>
-                        </div>
-                    </div>
-                    <h3 class="text-white font-semibold mb-3">📝 Bài viết của ${currentUser.fullName}</h3>
-                    ${myPosts.length === 0 ? '<div class="bg-[#2b2d31] rounded-xl p-8 text-center text-gray-400">Chưa có bài viết nào</div>' : 
-                        myPosts.map(p => `<div class="bg-[#2b2d31] rounded-xl p-4 mb-3"><p class="text-white">${escapeHtml(p.content)}</p><p class="text-gray-400 text-xs mt-2">${formatTime(p.createdAt)}</p></div>`).join('')}
-                </div>
-                <div id="editModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-                    <div class="bg-[#2b2d31] rounded-xl p-6 w-full max-w-md modal-content">
-                        <h3 class="text-xl font-bold text-white mb-4">Chỉnh sửa trang cá nhân</h3>
-                        <input type="text" id="editFullName" placeholder="Họ tên" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-3" value="${currentUser.fullName}">
-                        <textarea id="editBio" placeholder="Tiểu sử" rows="3" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-3">${currentUser.bio}</textarea>
-                        <input type="text" id="editAvatar" placeholder="URL avatar" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-3" value="${currentUser.avatar}">
-                        <input type="text" id="editBackground" placeholder="URL ảnh bìa" class="w-full p-3 bg-[#1e1f22] text-white rounded-lg mb-4" value="${currentUser.background}">
-                        <div class="flex gap-3"><button id="saveProfileBtn" class="flex-1 bg-[#5865F2] text-white py-2 rounded-lg">Lưu</button><button id="closeEditModal" class="flex-1 bg-[#1e1f22] text-white py-2 rounded-lg">Hủy</button></div>
-                    </div>
-                </div>
-            </div>`;
-        }
-        
-        function FriendsView() {
-            const allUsers = users.filter(u => u.id !== currentUser.id);
-            const searchQuery = document.getElementById('searchInput')?.value.toLowerCase() || '';
-            const filtered = searchQuery ? allUsers.filter(u => u.fullName.toLowerCase().includes(searchQuery) || u.username.toLowerCase().includes(searchQuery)) : allUsers;
-            const pending = friendRequests.filter(r => r.toUserId === currentUser.id && r.status === 'pending');
-            const friends = users.filter(u => currentUser.friends?.includes(u.id));
-            
-            return `<div class="min-h-screen bg-[#1e1f22]">
-                <div class="bg-[#2b2d31] sticky top-0 z-10 px-4 py-3 flex items-center justify-between">
-                    <button id="backToFeed" class="text-gray-400 hover:text-white"><i class="fas fa-arrow-left text-xl"></i></button>
-                    <div class="text-xl font-bold bg-gradient-to-r from-[#5865F2] to-[#EB459E] bg-clip-text text-transparent">Kết bạn</div>
-                    <button id="logoutBtn" class="text-gray-400 hover:text-white"><i class="fas fa-sign-out-alt text-xl"></i></button>
-                </div>
-                <div class="max-w-4xl mx-auto p-6">
-                    <div class="bg-[#2b2d31] rounded-xl p-4 mb-6"><div class="flex gap-3"><input type="text" id="searchInput" placeholder="🔍 Tìm bạn bè..." class="flex-1 bg-[#1e1f22] text-white p-3 rounded-lg"><button id="searchBtn" class="bg-[#5865F2] text-white px-6 rounded-lg">Tìm</button></div></div>
-                    ${pending.length > 0 ? `<div class="bg-[#2b2d31] rounded-xl p-4 mb-6"><h3 class="text-white font-semibold mb-3">📨 Lời mời</h3>${pending.map(r => { const fu = getUserById(r.fromUserId); return `<div class="flex items-center justify-between p-3"><div class="flex gap-3"><img src="${fu.avatar}" class="w-12 h-12 rounded-full"><div><p class="text-white">${fu.fullName}</p><p class="text-gray-400 text-sm">@${fu.username}</p></div></div><div class="flex gap-2"><button class="accept-friend px-3 py-1 bg-[#5865F2] text-white rounded-full text-sm" data-rid="${r.id}" data-uid="${r.fromUserId}">Đồng ý</button><button class="reject-friend px-3 py-1 bg-gray-600 text-white rounded-full text-sm" data-rid="${r.id}">Từ chối</button></div></div>`; }).join('')}</div>` : ''}
-                    <div class="bg-[#2b2d31] rounded-xl p-4"><h3 class="text-white font-semibold mb-3">👥 Kết quả (${filtered.length})</h3>${filtered.map(u => `<div class="friend-card flex items-center justify-between p-3 rounded-lg"><div class="flex gap-3"><img src="${u.avatar}" class="w-12 h-12 rounded-full"><div><p class="text-white">${u.fullName}</p><p class="text-gray-400 text-sm">@${u.username}</p><div class="flex items-center gap-1 mt-1"><div class="w-2 h-2 rounded-full ${isOnline(u.id) ? 'bg-green-500' : 'bg-gray-500'}"></div><span class="text-xs text-gray-500">${isOnline(u.id) ? 'Online' : 'Offline'}</span></div></div></div>${isFriend(u.id) ? '<span class="text-green-400"><i class="fas fa-check-circle"></i> Bạn bè</span>' : hasSentRequest(u.id) ? '<span class="text-gray-400">Đã gửi lời mời</span>' : hasReceivedRequest(u.id) ? '<div class="flex gap-2"><button class="accept-friend px-3 py-1 bg-[#5865F2] text-white rounded-full text-sm" data-rid="'+hasReceivedRequest(u.id)+'" data-uid="'+u.id+'">Đồng ý</button><button class="reject-friend px-3 py-1 bg-gray-600 text-white rounded-full text-sm" data-rid="'+hasReceivedRequest(u.id)+'">Từ chối</button></div>' : '<button class="add-friend-btn px-4 py-1 bg-[#5865F2] text-white rounded-full text-sm" data-uid="'+u.id+'"><i class="fas fa-user-plus"></i> Kết bạn</button>'}</div>`).join('')}</div>
-                </div>
-            </div>`;
-        }
-        
-        function FeedView() {
-            const friends = users.filter(u => currentUser.friends?.includes(u.id));
-            const myServers = servers.filter(s => s.members.includes(currentUser.id));
-            const pending = friendRequests.filter(r => r.toUserId === currentUser.id && r.status === 'pending');
-            
-            return `<div class="min-h-screen bg-[#1e1f22]">
-                <div class="bg-[#2b2d31] sticky top-0 z-10 px-4 py-3 flex items-center justify-between">
-                    <div class="text-xl font-bold bg-gradient-to-r from-[#5865F2] to-[#EB459E] bg-clip-text text-transparent">8E Social</div>
-                    <div class="flex gap-3">
-                        <button id="friendsNavBtn" class="text-gray-400 hover:text-white"><i class="fas fa-user-friends text-xl"></i></button>
-                        <button id="serversNavBtn" class="text-gray-400 hover:text-white"><i class="fas fa-server text-xl"></i></button>
-                        <button id="profileNavBtn"><img src="${currentUser.avatar}" class="w-8 h-8 rounded-full"></button>
-                        <button id="logoutBtn" class="text-gray-400 hover:text-white"><i class="fas fa-sign-out-alt text-xl"></i></button>
-                    </div>
-                </div>
-                <div class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-1 space-y-4">
-                        ${pending.length > 0 ? `<div class="bg-[#2b2d31] rounded-xl p-4"><h3 class="text-white font-semibold mb-2">📨 ${pending.length} lời mời</h3>${pending.map(r => { const fu = getUserById(r.fromUserId); return `<div class="flex items-center justify-between p-2"><div class="flex gap-2"><img src="${fu.avatar}" class="w-8 h-8 rounded-full"><span class="text-white text-sm">${fu.fullName}</span></div><button class="accept-friend px-2 py-1 bg-[#5865F2] text-white rounded text-xs" data-rid="${r.id}" data-uid="${r.fromUserId}">Đồng ý</button></div>`; }).join('')}</div>` : ''}
-                        <div class="bg-[#2b2d31] rounded-xl p-4"><div class="flex justify-between mb-3"><h3 class="text-white font-semibold">🖥️ Server</h3><button id="createServerBtn" class="text-[#5865F2] text-sm">+ Tạo</button></div>${myServers.map(s => `<div class="server-card flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-[#1e1f22]" data-sid="${s.id}"><div class="w-10 h-10 bg-gradient-to-r from-[#5865F2] to-[#EB459E] rounded-full flex items-center justify-center text-white font-bold">${s.name.charAt(0)}</div><div><p class="text-white text-sm">${s.name}</p><p class="text-gray-400 text-xs">${s.members.length} members</p></div></div>`).join('')}<button id="joinServerBtn" class="w-full mt-3 text-center text-[#5865F2] text-sm">+ Tham gia server</button></div>
-                        <div class="bg-[#2b2d31] rounded-xl p-4"><h3 class="text-white font-semibold mb-3">👥 Bạn bè (${friends.length})</h3>${friends.map(f => `<div class="flex items-center gap-3 p-2"><img src="${f.avatar}" class="w-10 h-10 rounded-full"><div><p class="text-white text-sm">${f.fullName}</p><div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full ${isOnline(f.id) ? 'bg-green-500' : 'bg-gray-500'}"></div><span class="text-xs text-gray-500">${isOnline(f.id) ? 'Online' : 'Offline'}</span></div></div></div>`).join('')}</div>
-                    </div>
-                    <div class="lg:col-span-2 space-y-4">
-                        <div class="bg-[#2b2d31] rounded-xl p-4"><div class="flex gap-3"><img src="${currentUser.avatar}" class="w-10 h-10 rounded-full"><input type="text" id="postContent" placeholder="Bạn đang nghĩ gì?" class="flex-1 p-3 bg-[#1e1f22] text-white rounded-full outline-none focus:ring-2 focus:ring-[#5865F2]"></div><div class="flex justify-end mt-3"><button id="submitPostBtn" class="px-6 py-2 bg-[#5865F2] text-white rounded-full">Đăng</button></div></div>
-                        ${posts.map(p => `<div class="bg-[#2b2d31] rounded-xl p-4 post-card"><div class="flex gap-3 mb-3"><img src="${p.userAvatar}" class="w-10 h-10 rounded-full"><div><p class="text-white font-semibold">${p.userName}</p><p class="text-gray-400 text-xs">${formatTime(p.createdAt)}</p></div></div><p class="text-gray-200 mb-3">${escapeHtml(p.content)}</p><div class="flex gap-4 border-t border-[#1e1f22] pt-3"><button class="like-post text-sm ${p.likes.includes(currentUser.id) ? 'text-[#5865F2]' : 'text-gray-400'}" data-pid="${p.id}"><i class="fas fa-heart"></i> ${p.likes.length} Thích</button><button class="comment-toggle text-sm text-gray-400" data-pid="${p.id}"><i class="fas fa-comment"></i> ${p.comments.length} Bình luận</button></div><div class="comments-section hidden mt-3" id="comments-${p.id}">${p.comments.map(c => `<div class="flex gap-2 mb-2"><img src="${c.userAvatar}" class="w-6 h-6 rounded-full"><div class="bg-[#1e1f22] rounded-lg p-2 flex-1"><p class="text-xs text-white font-semibold">${c.userName}</p><p class="text-sm text-gray-300">${escapeHtml(c.content)}</p></div></div>`).join('')}<div class="flex gap-2 mt-2"><img src="${currentUser.avatar}" class="w-6 h-6 rounded-full"><input type="text" class="comment-input flex-1 p-2 bg-[#1e1f22] text-white rounded-full text-sm outline-none" placeholder="Viết bình luận..." data-pid="${p.id}"></div></div></div>`).join('')}
-                    </div>
-                </div>
-            </div>`;
-        }
-        
-        function ServerView() {
-            const server = servers.find(s => s.id === currentServer?.id);
-            if (!server) { currentView = 'feed'; renderApp(); return ''; }
-            const channelMsgs = server.messages?.filter(m => m.channelId === currentChannel) || [];
-            const chInfo = server.channels.find(c => c.id === currentChannel);
-            const isOwner = server.ownerId === currentUser.id;
-            
-            return `<div class="flex h-screen">
-                <div class="w-60 bg-[#1e1f22] flex flex-col">
-                    <div class="h-12 flex items-center justify-between px-3 shadow-md border-b border-[#2b2d31]"><span class="text-white font-semibold">${server.name}</span><button id="serverSettingsBtn" class="text-gray-400 hover:text-white"><i class="fas fa-cog"></i></button></div>
-                    <div class="flex-1 overflow-auto p-2"><div class="text-xs text-gray-400 uppercase mb-2 px-2">Kênh văn bản</div>${server.channels.map(ch => `<div class="channel-item ${currentChannel === ch.id ? 'channel-active' : ''} p-2 rounded cursor-pointer flex items-center gap-2" data-ch="${ch.id}"><span class="text-gray-400">#</span><span class="text-gray-300 text-sm">${ch.name}</span></div>`).join('')}</div>
-                    <div class="p-3 border-t border-[#2b2d31]"><div class="flex items-center gap-2"><img src="${currentUser.avatar}" class="w-8 h-8 rounded-full"><div class="flex-1"><p class="text-white text-sm">${currentUser.fullName}</p><div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-green-500"></div><p class="text-gray-400 text-xs">Online</p></div></div><button id="leaveServerBtn" class="text-gray-400 hover:text-red-400"><i class="fas fa-sign-out-alt"></i></button></div></div>
-                </div>
-                <div class="flex-1 flex flex-col bg-[#2b2d31]"><div class="h-12 flex items-center px-4 border-b border-[#1e1f22]"><span class="text-gray-400">#</span><span class="text-white ml-2">${chInfo?.name}</span></div>
-                <div id="serverMessages" class="flex-1 overflow-auto p-4 space-y-2">${channelMsgs.map(m => `<div class="message flex gap-3 p-2 rounded"><img src="${m.userAvatar}" class="w-10 h-10 rounded-full"><div><div class="flex items-baseline gap-2"><span class="text-white font-semibold">${m.userName}</span><span class="text-gray-400 text-xs">${formatTime(m.timestamp)}</span></div><div class="text-gray-200">${m.content}</div></div></div>`).join('')}</div>
-                <div class="p-4"><div class="bg-[#1e1f22] rounded-lg flex"><input type="text" id="serverMessageInput" class="flex-1 bg-transparent text-white p-3 outline-none" placeholder="Nhập tin nhắn... @tên để mention"><button id="sendServerMsgBtn" class="bg-[#5865F2] text-white px-4 m-1 rounded">Gửi</button></div></div></div>
-                <div id="settingsModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"><div class="bg-[#2b2d31] rounded-xl p-6 w-full max-w-md modal-content"><h3 class="text-xl font-bold text-white mb-4">Cài đặt server</h3><div class="space-y-3"><label class="flex items-center justify-between text-white"><span><i class="fas fa-bell"></i> Thông báo mặc định</span><input type="checkbox" id="setting_notifications" ${server.settings?.defaultNotifications !== false ? 'checked' : ''}></label><label class="flex items-center justify-between text-white"><span><i class="fas fa-at"></i> Cho phép @everyone</span><input type="checkbox" id="setting_mention" ${server.settings?.everyoneMention !== false ? 'checked' : ''}></label><div class="flex gap-3 mt-4"><button id="saveSettingsBtn" class="flex-1 bg-[#5865F2] text-white py-2 rounded-lg">Lưu</button><button id="closeSettingsBtn" class="flex-1 bg-[#1e1f22] text-white py-2 rounded-lg">Hủy</button></div></div></div></div>
-            </div>`;
-        }
-        
-        // ==================== RENDER ====================
-        function renderApp() {
-            loadData();
-            const app = document.getElementById('app');
-            if (!currentUser) {
-                if (currentView === 'login') app.innerHTML = LoginScreen();
-                else if (currentView === 'register') app.innerHTML = RegisterScreen();
-                else app.innerHTML = WelcomeScreen();
-            } else {
-                if (currentView === 'profile') app.innerHTML = ProfileView();
-                else if (currentView === 'friends') app.innerHTML = FriendsView();
-                else if (currentView === 'server') app.innerHTML = ServerView();
-                else app.innerHTML = FeedView();
-            }
-            attachEvents();
-        }
-        
-        function attachEvents() {
-            if (!currentUser) {
-                document.getElementById('loginBtn')?.addEventListener('click', () => { currentView = 'login'; renderApp(); });
-                document.getElementById('registerBtn')?.addEventListener('click', () => { currentView = 'register'; renderApp(); });
-                document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
-                document.getElementById('switchToRegister')?.addEventListener('click', () => { currentView = 'register'; renderApp(); });
-                document.getElementById('registerForm')?.addEventListener('submit', handleRegister);
-                document.getElementById('switchToLogin')?.addEventListener('click', () => { currentView = 'login'; renderApp(); });
-            } else {
-                // Navigation
-                document.getElementById('friendsNavBtn')?.addEventListener('click', () => { currentView = 'friends'; renderApp(); });
-                document.getElementById('serversNavBtn')?.addEventListener('click', () => { currentView = 'feed'; renderApp(); });
-                document.getElementById('profileNavBtn')?.addEventListener('click', () => { currentView = 'profile'; renderApp(); });
-                document.getElementById('backToFeed')?.addEventListener('click', () => { currentView = 'feed'; renderApp(); });
-                document.getElementById('logoutBtn')?.addEventListener('click', logout);
-                
-                // Servers
-                document.getElementById('createServerBtn')?.addEventListener('click', createServer);
-                document.getElementById('joinServerBtn')?.addEventListener('click', joinServerByCode);
-                document.querySelectorAll('.server-card').forEach(c => c.addEventListener('click', () => {
-                    currentServer = servers.find(s => s.id === c.dataset.sid);
-                    currentChannel = 'general';
-                    currentView = 'server';
-                    renderApp();
-                }));
-                
-                // Server view
-                document.getElementById('sendServerMsgBtn')?.addEventListener('click', sendServerMessage);
-                document.getElementById('serverMessageInput')?.addEventListener('keypress', e => { if(e.key === 'Enter') sendServerMessage(); });
-                document.querySelectorAll('.channel-item').forEach(ch => ch.addEventListener('click', () => { currentChannel = ch.dataset.ch; renderApp(); }));
-                document.getElementById('leaveServerBtn')?.addEventListener('click', () => { if(confirm('Rời server?')){ currentView='feed'; currentServer=null; renderApp(); } });
-                document.getElementById('serverSettingsBtn')?.addEventListener('click', () => document.getElementById('settingsModal')?.classList.remove('hidden'));
-                document.getElementById('saveSettingsBtn')?.addEventListener('click', () => { updateServerSettings(); document.getElementById('settingsModal')?.classList.add('hidden'); });
-                document.getElementById('closeSettingsBtn')?.addEventListener('click', () => document.getElementById('settingsModal')?.classList.add('hidden'));
-                
-                // Feed
-                document.getElementById('submitPostBtn')?.addEventListener('click', () => { const inp = document.getElementById('postContent'); if(inp) createPost(inp.value); });
-                document.getElementById('postContent')?.addEventListener('keypress', e => { if(e.key === 'Enter') createPost(e.target.value); });
-                document.querySelectorAll('.like-post').forEach(b => b.addEventListener('click', () => likePost(b.dataset.pid)));
-                document.querySelectorAll('.comment-toggle').forEach(b => b.addEventListener('click', () => document.getElementById(`comments-${b.dataset.pid}`)?.classList.toggle('hidden')));
-                document.querySelectorAll('.comment-input').forEach(i => i.addEventListener('keypress', e => { if(e.key === 'Enter') addComment(i.dataset.pid, i.value); }));
-                
-                // Friends
-                document.getElementById('searchBtn')?.addEventListener('click', () => renderApp());
-                document.getElementById('searchInput')?.addEventListener('keypress', e => { if(e.key === 'Enter') renderApp(); });
-                document.querySelectorAll('.accept-friend').forEach(b => b.addEventListener('click', () => acceptFriendRequest(b.dataset.rid, b.dataset.uid)));
-                document.querySelectorAll('.reject-friend').forEach(b => b.addEventListener('click', () => rejectFriendRequest(b.dataset.rid)));
-                document.querySelectorAll('.add-friend-btn').forEach(b => b.addEventListener('click', () => sendFriendRequest(b.dataset.uid)));
-                
-                // Profile
-                document.querySelectorAll('.edit-profile-btn').forEach(b => b.addEventListener('click', () => document.getElementById('editModal')?.classList.remove('hidden')));
-                document.getElementById('saveProfileBtn')?.addEventListener('click', updateProfile);
-                document.getElementById('closeEditModal')?.addEventListener('click', () => document.getElementById('editModal')?.classList.add('hidden'));
-                document.querySelectorAll('.set-status').forEach(b => b.addEventListener('click', () => updateStatus(b.dataset.status)));
-            }
-        }
-        
-        loadData();
-        renderApp();
-    </script>
+    })();
+</script>
 </body>
 </html>
