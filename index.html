@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Trần Minh Tuấn 2k12 | Studio Lyric Animation</title>
+    <title>Trần Minh Tuấn 2k12 | Gõ phím thời gian thực - Không Buông</title>
     <style>
         * {
             margin: 0;
@@ -14,537 +14,594 @@
 
         body {
             min-height: 100vh;
-            background: radial-gradient(circle at 10% 20%, #0a0f2a, #020617);
-            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(145deg, #1a2a3a 0%, #0e1a28 100%);
+            font-family: 'Segoe UI', 'Poppins', system-ui, 'Quicksand', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow-x: hidden;
+            position: relative;
         }
 
-        /* Container chính */
-        .app-container {
-            width: 100%;
-            max-width: 700px;
-            transition: all 0.3s ease;
-        }
-
-        /* KHUNG NHẬP LIỆU (trạng thái ban đầu) */
-        .input-panel {
-            background: rgba(10, 20, 35, 0.65);
-            backdrop-filter: blur(16px);
-            border-radius: 48px;
-            padding: 2rem 1.8rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            text-align: center;
-            transition: all 0.4s;
-        }
-
-        .title-glow {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #FFD966, #FF85C2, #A569FF);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .sub {
-            color: #aaaaff;
-            font-size: 0.85rem;
-            margin-bottom: 24px;
-            letter-spacing: 1px;
-        }
-
-        textarea {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid rgba(255, 180, 200, 0.5);
-            border-radius: 32px;
-            padding: 18px 20px;
-            font-size: 1rem;
-            font-family: 'Poppins', monospace;
-            color: #ffecb3;
-            resize: vertical;
-            outline: none;
-            transition: 0.2s;
-            font-weight: 500;
-            backdrop-filter: blur(4px);
-        }
-
-        textarea:focus {
-            border-color: #ff66cc;
-            box-shadow: 0 0 15px #ff66aa;
-        }
-
-        .btn-run {
-            background: linear-gradient(95deg, #ff3d8c, #b73c9e);
-            border: none;
-            padding: 14px 28px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            border-radius: 60px;
-            margin-top: 24px;
-            cursor: pointer;
-            width: 80%;
-            transition: 0.2s;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-            letter-spacing: 1px;
-        }
-
-        .btn-run:hover {
-            transform: scale(1.02);
-            background: linear-gradient(95deg, #ff5fa0, #d44bb3);
-            box-shadow: 0 0 18px #ff66aa;
-        }
-
-        /* KHUNG HIỆN THỊ ANIMATION (ẩn ban đầu) */
-        .animation-panel {
-            display: none;
-            background: rgba(5, 8, 20, 0.7);
-            backdrop-filter: blur(20px);
-            border-radius: 56px;
-            padding: 1.8rem;
-            border: 1px solid rgba(255, 215, 150, 0.5);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
-            text-align: center;
-            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .artist-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .song-badge {
-            font-size: 1.2rem;
-            font-weight: 600;
-            background: rgba(0,0,0,0.5);
-            padding: 6px 18px;
-            border-radius: 40px;
-            color: #ffdd99;
-            border-left: 4px solid #ff77aa;
-        }
-
-        .btn-back {
-            background: rgba(255,255,240,0.15);
-            border: none;
-            border-radius: 40px;
-            padding: 8px 20px;
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-            backdrop-filter: blur(8px);
-            transition: 0.2s;
-        }
-
-        .btn-back:hover {
-            background: rgba(255,100,150,0.4);
-        }
-
-        /* Khung chứa lời nhạc animation */
-        .lyric-stage {
-            background: rgba(0, 0, 0, 0.45);
-            border-radius: 48px;
-            min-height: 380px;
-            padding: 32px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 200, 150, 0.3);
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.2);
-            overflow: hidden;
-        }
-
-        .animated-lyric {
-            font-size: 2rem;
-            font-weight: 800;
-            text-align: center;
-            line-height: 1.4;
-            transition: all 0.4s ease;
-            color: #fff0cc;
-            text-shadow: 0 0 5px #ff66aa, 0 0 12px #ff44aa;
-            word-break: break-word;
-            animation: lyricPulse 1.6s infinite alternate;
-            background: linear-gradient(135deg, #ffe6b3, #ffb3e6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: none;
-        }
-
-        @keyframes lyricPulse {
-            0% {
-                letter-spacing: 1px;
-                filter: drop-shadow(0 0 2px #ff88cc);
-                transform: scale(1);
-            }
-            100% {
-                letter-spacing: 4px;
-                filter: drop-shadow(0 0 12px #ff44ee);
-                transform: scale(1.02);
-            }
-        }
-
-        /* Hiệu ứng nền động nhẹ */
-        .moving-bg {
+        /* Nền hoạt nhẹ nhàng */
+        .bg-soft {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(255,210,150,0.08), transparent 70%);
             pointer-events: none;
-            overflow: hidden;
-        }
-        .orb {
-            position: absolute;
-            width: 40vmax;
-            height: 40vmax;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,100,200,0.2), transparent);
-            animation: floatBg 18s infinite alternate;
-            filter: blur(70px);
-        }
-        .orb2 {
-            background: radial-gradient(circle, rgba(100,200,255,0.2), transparent);
-            bottom: 0;
-            right: 0;
-            animation: floatBg2 22s infinite alternate;
-        }
-        @keyframes floatBg {
-            0% { transform: translate(0,0) scale(1); opacity: 0.4; }
-            100% { transform: translate(8%, 10%) scale(1.3); opacity: 0.8; }
-        }
-        @keyframes floatBg2 {
-            0% { transform: translate(0,0) scale(0.9); opacity: 0.3; }
-            100% { transform: translate(-12%, -8%) scale(1.4); opacity: 0.7; }
+            z-index: 0;
         }
 
-        /* Nút điều khiển animation */
-        .animation-controls {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin: 16px 0 8px;
-        }
-        .anim-btn {
-            background: rgba(255,255,240,0.15);
-            border: none;
-            padding: 10px 22px;
+        /* Container chính - giao diện bo tròn thân thiện */
+        .friendly-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(25, 35, 50, 0.75);
+            backdrop-filter: blur(18px);
             border-radius: 60px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            backdrop-filter: blur(8px);
-            transition: 0.2s;
-            font-size: 0.9rem;
-        }
-        .anim-btn-primary {
-            background: linear-gradient(145deg, #ff4d9e, #bb2e7a);
-            box-shadow: 0 0 6px #ff77bb;
-        }
-        .footer {
-            font-size: 0.7rem;
-            text-align: center;
-            margin-top: 20px;
-            color: #aaaaf0;
+            width: 100%;
+            max-width: 750px;
+            padding: 1.8rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 240, 200, 0.2);
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 215, 170, 0.3);
         }
 
-        @media (max-width: 550px) {
-            .animated-lyric { font-size: 1.4rem; }
-            .title-glow { font-size: 1.3rem; }
-            .input-panel { padding: 1.5rem; }
-            .btn-run { width: 100%; }
+        /* Header tên + cảm xúc */
+        .warm-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .name-tuan {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(125deg, #FFE5B4, #FFB3D1, #AAD0FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .tag-line {
+            font-size: 0.8rem;
+            background: rgba(255,245,200,0.2);
+            display: inline-block;
+            padding: 4px 18px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            color: #ffe1b3;
+            margin-top: 8px;
+        }
+
+        /* Khu vực nhập lời và cài đặt thời gian */
+        .lyric-editor {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 40px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            color: #ffddbb;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+        textarea {
+            width: 100%;
+            background: #0f1a24;
+            border: 2px solid #ffb37c;
+            border-radius: 28px;
+            padding: 16px 18px;
+            font-family: 'Poppins', monospace;
+            color: #fdebb3;
+            font-size: 0.95rem;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 16px;
+        }
+        textarea:focus {
+            border-color: #ff99cc;
+            box-shadow: 0 0 8px #ffaadd;
+        }
+
+        .time-settings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.3);
+            padding: 12px 18px;
+            border-radius: 60px;
+            margin: 12px 0;
+        }
+        .time-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0,0,0,0.4);
+            padding: 5px 15px;
+            border-radius: 60px;
+        }
+        .time-control label {
+            font-weight: 500;
+            color: #ffcf9a;
+        }
+        input[type="number"] {
+            width: 70px;
+            padding: 8px;
+            border-radius: 40px;
+            border: none;
+            text-align: center;
+            background: #fff0dd;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .btn-run {
+            background: linear-gradient(95deg, #ff8c5a, #ff4d9e);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+
+        /* Khu vực trình diễn animation gõ chữ */
+        .stage-area {
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 48px;
+            padding: 28px 20px;
+            margin: 20px 0;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 235, 180, 0.4);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .typing-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.4;
+            word-break: break-word;
+            font-family: 'Fira Code', 'Poppins', monospace;
+            color: #fff3cf;
+            text-shadow: 0 0 6px #ff77aa;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 4px;
+            height: 1.8rem;
+            background-color: #ffbb88;
+            margin-left: 6px;
+            vertical-align: middle;
+            animation: blinkCursor 0.9s step-end infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Điều khiển trình chiếu */
+        .present-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0 10px;
+            flex-wrap: wrap;
+        }
+        .ctrl-btn {
+            background: rgba(255,255,210,0.15);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            color: #fff0cc;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .ctrl-primary {
+            background: #ff6a9e;
+            color: white;
+            box-shadow: 0 0 8px #ff88bb;
+        }
+        .status-info {
+            text-align: center;
+            font-size: 0.75rem;
+            margin-top: 12px;
+            color: #bbccff;
+        }
+
+        .back-btn {
+            background: rgba(255,215,150,0.2);
+            margin-top: 8px;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 18px;
+            color: #ccaaff;
+        }
+
+        @media (max-width: 600px) {
+            .typing-text { font-size: 1.2rem; }
+            .friendly-card { padding: 1.2rem; }
+            .time-control { flex-wrap: wrap; justify-content: center; }
         }
     </style>
 </head>
 <body>
+<div class="bg-soft"></div>
 
-<div class="moving-bg">
-    <div class="orb"></div>
-    <div class="orb orb2"></div>
-</div>
-
-<div class="app-container">
-    <!-- ========== PHẦN NHẬP LỜI NHẠC ========= -->
-    <div id="inputSection" class="input-panel">
-        <div class="title-glow">✨ Trần Minh Tuấn 2k12 ✨</div>
-        <div class="sub">📝 Nhập lời bài hát "Không Buông" (hoặc lời bạn muốn) bên dưới</div>
-        <textarea id="lyricInput" rows="5" placeholder="Ví dụ:&#10;Không buông tay anh nhé&#10;Dù cho mai sau cách xa&#10;Vẫn luôn yêu em mà..."></textarea>
-        <div>
-            <button class="btn-run" id="runBtn">🎆 CHẠY HIỆU ỨNG 🎆</button>
-        </div>
-        <div class="footer" style="margin-top: 18px;">💡 Nhập mỗi câu trên một dòng → Bấm chạy để xem animation chữ đẹp mắt</div>
+<div class="friendly-card" id="appContainer">
+    <div class="warm-header">
+        <div class="name-tuan">✨ Trần Minh Tuấn 2k12 ✨</div>
+        <div class="tag-line">🎹 Hiệu ứng gõ phím · Căn thời gian từng câu 🎹</div>
     </div>
 
-    <!-- ========== PHẦN HIỂN THỊ ANIMATION (ban đầu ẩn) ========= -->
-    <div id="animationSection" class="animation-panel">
-        <div class="artist-header">
-            <span class="song-badge">🎤 Không Buông - Hngle 🎤</span>
-            <button id="backBtn" class="btn-back">✍️ Nhập lời mới</button>
+    <!-- PHẦN NHẬP LIỆU & CÀI ĐẶT -->
+    <div id="inputPanel">
+        <div class="lyric-editor">
+            <div class="section-title">📝 Nhập lời bài hát (từng câu trên một dòng)</div>
+            <textarea id="lyricsTextArea" rows="6" placeholder="Ví dụ:&#10;Không buông tay anh nhé em&#10;Dù mai đây bao giông tố&#10;Vẫn mãi bên nhau chẳng rời&#10;Không Buông - Hngle"></textarea>
+            
+            <div class="time-settings">
+                <div class="time-control">
+                    <label>⏱️ Thời gian mỗi câu:</label>
+                    <input type="number" id="timePerLine" value="3.5" step="0.5" min="1.2" max="10"> giây
+                </div>
+                <div class="time-control">
+                    <label>⌨️ Tốc độ gõ chữ:</label>
+                    <input type="number" id="typingSpeed" value="50" step="10" min="20" max="150"> ms/ký tự
+                </div>
+            </div>
+            <button class="btn-run" id="runShowBtn">🎬 BẮT ĐẦU TRÌNH DIỄN GÕ PHÍM 🎬</button>
         </div>
-        <div class="lyric-stage" id="lyricStage">
-            <div id="displayLyric" class="animated-lyric">✨ Chờ đợi hiệu ứng... ✨</div>
+        <footer>💡 Mỗi dòng là 1 câu. Hiệu ứng gõ từng chữ y như đang gõ bàn phím! Sau mỗi câu sẽ tự động chuyển.</footer>
+    </div>
+
+    <!-- PHẦN TRÌNH DIỄN ANIMATION (ẩn ban đầu) -->
+    <div id="presentationPanel" style="display: none;">
+        <div class="stage-area">
+            <div id="typingDisplay" class="typing-text"></div>
         </div>
-        <div class="animation-controls">
-            <button id="prevLineBtn" class="anim-btn">⏮️ Câu trước</button>
-            <button id="playAutoBtn" class="anim-btn anim-btn-primary">▶️ TỰ ĐỘNG</button>
-            <button id="nextLineBtn" class="anim-btn">Câu tiếp ⏭️</button>
+        <div class="present-controls">
+            <button id="prevLineBtn" class="ctrl-btn">⏪ Câu trước</button>
+            <button id="playPauseBtn" class="ctrl-btn ctrl-primary">⏸️ Tạm dừng</button>
+            <button id="nextLineBtn" class="ctrl-btn">Câu tiếp ⏩</button>
         </div>
-        <div class="footer">
-            🎵 Animation chữ lung linh | Tự động chuyển câu sau 3.5 giây | Bấm nút để tương tác
+        <div class="present-controls">
+            <button id="resetShowBtn" class="ctrl-btn back-btn">✏️ Sửa lời / Cài đặt lại</button>
         </div>
+        <div id="progressStatus" class="status-info">📖 Đang trình diễn ...</div>
+        <footer>✨ Từng chữ hiện ra như gõ phím | Tự động chuyển câu theo thời gian đã cài ✨</footer>
     </div>
 </div>
 
 <script>
-    (function() {
-        // DOM elements
-        const inputSection = document.getElementById('inputSection');
-        const animationSection = document.getElementById('animationSection');
-        const runBtn = document.getElementById('runBtn');
-        const backBtn = document.getElementById('backBtn');
-        const lyricInput = document.getElementById('lyricInput');
-        const displayLyricDiv = document.getElementById('displayLyric');
+    (function(){
+        // DOM
+        const inputPanel = document.getElementById('inputPanel');
+        const presentationPanel = document.getElementById('presentationPanel');
+        const runBtn = document.getElementById('runShowBtn');
+        const resetShowBtn = document.getElementById('resetShowBtn');
+        const lyricsTextArea = document.getElementById('lyricsTextArea');
+        const timePerLineInput = document.getElementById('timePerLine');
+        const typingSpeedInput = document.getElementById('typingSpeed');
+        const typingDisplay = document.getElementById('typingDisplay');
         const prevLineBtn = document.getElementById('prevLineBtn');
         const nextLineBtn = document.getElementById('nextLineBtn');
-        const playAutoBtn = document.getElementById('playAutoBtn');
-
-        // Dữ liệu lời bài hát được phân tích từ input
-        let lyricsArray = [];        // mảng các dòng lời
-        let currentIndex = 0;
-        let autoInterval = null;
-        let isAutoPlaying = false;
-
-        // Hàm xử lý animation chuyển câu với hiệu ứng đẹp mắt
-        function updateLyricDisplay() {
-            if (!lyricsArray.length) {
-                displayLyricDiv.innerText = "💖 Không có lời nào, hãy quay lại nhập lời! 💖";
-                return;
-            }
-            if (currentIndex < 0) currentIndex = 0;
-            if (currentIndex >= lyricsArray.length) currentIndex = lyricsArray.length - 1;
-            const newText = lyricsArray[currentIndex];
-            // reset animation để tạo hiệu ứng mượt
-            displayLyricDiv.style.animation = 'none';
-            displayLyricDiv.offsetHeight; // force reflow
-            displayLyricDiv.innerText = newText;
-            displayLyricDiv.style.animation = 'lyricPulse 1.6s infinite alternate';
-            // thêm hiệu ứng glow tạm thời
-            displayLyricDiv.style.transform = 'scale(1.02)';
-            setTimeout(() => {
-                if (displayLyricDiv) displayLyricDiv.style.transform = '';
-            }, 200);
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const progressStatus = document.getElementById('progressStatus');
+        
+        // biến trạng thái
+        let lyricsLines = [];       // mảng các câu
+        let currentLineIndex = 0;
+        let currentCharIndex = 0;
+        let currentTargetText = ""; // câu đang hướng tới (full)
+        let isTyping = false;
+        let typingTimer = null;
+        let lineTimer = null;       // timer chuyển câu tự động
+        let isAutoMode = true;      // tự động chuyển câu
+        let isPaused = false;       // tạm dừng toàn bộ (không gõ, không tự động)
+        let currentFullLine = "";
+        
+        // lấy giá trị setting
+        function getTimePerLine() { return parseFloat(timePerLineInput.value) * 1000; }
+        function getTypingDelay() { return parseInt(typingSpeedInput.value); }
+        
+        // dừng tất cả timer
+        function stopAllTimers() {
+            if(typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
+            if(lineTimer) { clearTimeout(lineTimer); lineTimer = null; }
         }
-
-        // Dừng auto play nếu đang chạy
-        function stopAutoPlay() {
-            if (autoInterval) {
-                clearInterval(autoInterval);
-                autoInterval = null;
-            }
-            isAutoPlaying = false;
-            if (playAutoBtn) playAutoBtn.innerHTML = '▶️ TỰ ĐỘNG';
+        
+        // reset trạng thái typing (giữ nguyên index câu)
+        function resetTypingState() {
+            if(typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
+            isTyping = false;
+            currentCharIndex = 0;
         }
-
-        // Bắt đầu auto play (chạy lần lượt các câu)
-        function startAutoPlay() {
-            if (!lyricsArray.length) return;
-            stopAutoPlay();
-            isAutoPlaying = true;
-            playAutoBtn.innerHTML = '⏸️ DỪNG';
-            autoInterval = setInterval(() => {
-                if (currentIndex + 1 < lyricsArray.length) {
-                    currentIndex++;
-                    updateLyricDisplay();
+        
+        // hiển thị chữ hiện tại (từ đầu đến currentCharIndex) trên màn hình
+        function updateDisplayText() {
+            if(!typingDisplay) return;
+            let showText = currentFullLine.substring(0, currentCharIndex);
+            if(showText === "") showText = "✨";
+            // Thêm con trỏ nhấp nháy nếu đang gõ hoặc chưa kết thúc câu (chưa hoàn thành full)
+            const isComplete = (currentCharIndex >= currentFullLine.length);
+            if(!isComplete || isTyping) {
+                typingDisplay.innerHTML = showText + '<span class="cursor-blink"></span>';
+            } else {
+                typingDisplay.innerHTML = showText + '<span style="opacity:0.4;">|</span>';
+            }
+        }
+        
+        // gõ từng chữ một (animation gõ phím)
+        function startTypingAnimation() {
+            if(isPaused) return;
+            if(typingTimer) clearTimeout(typingTimer);
+            if(currentCharIndex < currentFullLine.length) {
+                isTyping = true;
+                // gõ một ký tự
+                currentCharIndex++;
+                updateDisplayText();
+                if(currentCharIndex < currentFullLine.length) {
+                    typingTimer = setTimeout(() => {
+                        startTypingAnimation();
+                    }, getTypingDelay());
                 } else {
-                    // nếu hết lời, quay lại câu đầu (hoặc dừng - tùy chọn: quay lại để trải nghiệm)
-                    currentIndex = 0;
-                    updateLyricDisplay();
-                    // tạo hiệu ứng phấn khích
-                    addTemporaryGlow();
+                    // đã gõ xong câu hiện tại
+                    isTyping = false;
+                    if(typingTimer) clearTimeout(typingTimer);
+                    typingTimer = null;
+                    updateDisplayText(); // hiển thị full câu + con trỏ tĩnh
+                    // Nếu autoMode và không bị tạm dừng, bắt đầu đếm thời gian để chuyển câu
+                    if(isAutoMode && !isPaused) {
+                        scheduleNextLine();
+                    }
                 }
-            }, 3500); // mỗi 3.5s chuyển câu
-        }
-
-        // hiệu ứng phụ
-        function addTemporaryGlow() {
-            const stage = document.getElementById('lyricStage');
-            if (stage) {
-                stage.style.transition = '0.2s';
-                stage.style.boxShadow = '0 0 20px #ff66aa, inset 0 0 15px rgba(255,100,200,0.3)';
-                setTimeout(() => {
-                    if (stage) stage.style.boxShadow = '';
-                }, 400);
+            } else {
+                isTyping = false;
+                updateDisplayText();
+                if(isAutoMode && !isPaused) scheduleNextLine();
             }
         }
-
-        // Chuyển sang chế độ animation dựa trên nội dung nhập
-        function switchToAnimation() {
-            // Lấy nội dung từ textarea, tách dòng
-            let rawText = lyricInput.value;
-            // tách các dòng, bỏ dòng trống đầu cuối
+        
+        // Lên lịch chuyển câu tiếp theo
+        function scheduleNextLine() {
+            if(lineTimer) clearTimeout(lineTimer);
+            if(!isAutoMode || isPaused) return;
+            lineTimer = setTimeout(() => {
+                if(!isPaused && isAutoMode) {
+                    goToNextLine();
+                }
+            }, getTimePerLine());
+        }
+        
+        // Hủy lịch chuyển câu
+        function cancelSchedule() {
+            if(lineTimer) { clearTimeout(lineTimer); lineTimer = null; }
+        }
+        
+        // Tải câu hiện tại (theo index) và bắt đầu gõ từ đầu
+        function loadLineAndType(lineIdx) {
+            if(!lyricsLines.length) return;
+            if(lineIdx < 0) lineIdx = 0;
+            if(lineIdx >= lyricsLines.length) lineIdx = lyricsLines.length - 1;
+            currentLineIndex = lineIdx;
+            currentFullLine = lyricsLines[currentLineIndex];
+            // reset gõ
+            resetTypingState();
+            cancelSchedule();
+            currentCharIndex = 0;
+            isTyping = false;
+            // cập nhật trạng thái
+            updateDisplayText();
+            // nếu không bị pause, bắt đầu gõ
+            if(!isPaused) {
+                startTypingAnimation();
+            } else {
+                // nếu paused, chỉ hiển thị đoạn trống?
+                if(typingDisplay) typingDisplay.innerHTML = currentFullLine.substring(0,0) + '<span class="cursor-blink"></span>';
+            }
+            updateProgressStatus();
+        }
+        
+        // chuyển câu kế tiếp
+        function goToNextLine() {
+            if(!lyricsLines.length) return;
+            let nextIndex = currentLineIndex + 1;
+            if(nextIndex >= lyricsLines.length) {
+                // hết lời, quay lại đầu hoặc dừng tùy, ta quay lại đầu để vòng tuần hoàn
+                nextIndex = 0;
+            }
+            stopAllTimers();
+            cancelSchedule();
+            currentLineIndex = nextIndex;
+            loadLineAndType(currentLineIndex);
+        }
+        
+        // câu trước
+        function goToPrevLine() {
+            if(!lyricsLines.length) return;
+            let prevIndex = currentLineIndex - 1;
+            if(prevIndex < 0) prevIndex = lyricsLines.length - 1;
+            stopAllTimers();
+            cancelSchedule();
+            currentLineIndex = prevIndex;
+            loadLineAndType(currentLineIndex);
+        }
+        
+        // tạm dừng / tiếp tục
+        function togglePause() {
+            if(!lyricsLines.length) return;
+            if(isPaused) {
+                // tiếp tục
+                isPaused = false;
+                playPauseBtn.innerHTML = '⏸️ Tạm dừng';
+                // nếu chưa gõ xong câu thì tiếp tục gõ
+                if(currentCharIndex < currentFullLine.length) {
+                    startTypingAnimation();
+                } else {
+                    // nếu đã gõ xong, bắt đầu schedule chuyển câu
+                    if(isAutoMode) scheduleNextLine();
+                }
+            } else {
+                // dừng lại
+                isPaused = true;
+                playPauseBtn.innerHTML = '▶️ Tiếp tục';
+                stopAllTimers();
+                cancelSchedule();
+                // dừng gõ
+                if(typingTimer) clearTimeout(typingTimer);
+                isTyping = false;
+            }
+            updateProgressStatus();
+        }
+        
+        function updateProgressStatus() {
+            if(progressStatus) {
+                if(isPaused) progressStatus.innerHTML = `⏸ Đã tạm dừng | Câu ${currentLineIndex+1}/${lyricsLines.length} | ⏱️ ${timePerLineInput.value}s/mỗi câu`;
+                else if(isAutoMode) progressStatus.innerHTML = `🎬 Đang trình diễn gõ phím | Câu ${currentLineIndex+1}/${lyricsLines.length} | ⏱️ Tự động chuyển sau ${timePerLineInput.value} giây`;
+                else progressStatus.innerHTML = `🖱️ Thủ công | Câu ${currentLineIndex+1}/${lyricsLines.length}`;
+            }
+        }
+        
+        // Khởi tạo trình diễn từ dữ liệu nhập
+        function initPresentation() {
+            let rawText = lyricsTextArea.value;
             let lines = rawText.split(/\r?\n/);
-            // Lọc bỏ dòng chỉ toàn khoảng trắng
-            lines = lines.filter(line => line.trim().length > 0);
-            
-            if (lines.length === 0) {
-                // Nếu không nhập gì, dùng lời mẫu gợi ý từ bài "Không Buông"
-                lines = [
-                    "🌙 Không buông tay em nhé",
-                    "💖 Dù mai đây cách xa",
-                    "🎵 Vẫn luôn yêu thương này",
-                    "✨ Chẳng thể phai nhòa",
-                    "🔥 Không Buông - Hngle 🔥",
-                    "💫 Trần Minh Tuấn 2k12 lắng nghe!"
-                ];
-                lyricInput.value = lines.join('\n');
+            lines = lines.filter(l => l.trim().length > 0);
+            if(lines.length === 0) {
+                lines = ["💖 Không buông tay anh nhé", "🎵 Dù cho mưa gió bão", "🌙 Vẫn có nhau trọn đời", "✨ Không Buông - Hngle ✨", "Trần Minh Tuấn 2k12!"];
+                lyricsTextArea.value = lines.join('\n');
             }
-            
-            lyricsArray = [...lines];
-            currentIndex = 0;
-            
-            // Dừng auto nếu đang chạy trước đó
-            stopAutoPlay();
-            
-            // Ẩn input panel, hiển thị animation panel
-            inputSection.style.display = 'none';
-            animationSection.style.display = 'block';
-            
-            // Hiển thị câu đầu tiên
-            updateLyricDisplay();
-            
-            // Tự động chạy auto play để sinh động liền
-            startAutoPlay();
-            
-            // Thêm hiệu ứng mừng rỡ khi chuyển
-            const stage = document.getElementById('lyricStage');
-            if (stage) {
-                stage.style.transform = 'scale(0.98)';
-                setTimeout(() => { if(stage) stage.style.transform = ''; }, 200);
-            }
+            lyricsLines = [...lines];
+            currentLineIndex = 0;
+            isPaused = false;
+            isAutoMode = true;
+            playPauseBtn.innerHTML = '⏸️ Tạm dừng';
+            // Ẩn input panel, hiện presentation
+            inputPanel.style.display = 'none';
+            presentationPanel.style.display = 'block';
+            stopAllTimers();
+            cancelSchedule();
+            // load câu đầu và bắt đầu gõ
+            loadLineAndType(0);
         }
         
-        // Quay lại màn hình nhập lời (giữ nguyên nội dung đã nhập)
-        function backToInput() {
-            stopAutoPlay();
-            inputSection.style.display = 'block';
-            animationSection.style.display = 'none';
-            // reset hiển thị
-            displayLyricDiv.innerText = "✨ Sẵn sàng cho lời nhạc mới ✨";
-            lyricsArray = [];
-            currentIndex = 0;
+        // Reset về màn hình nhập liệu
+        function resetToInput() {
+            stopAllTimers();
+            cancelSchedule();
+            isPaused = false;
+            inputPanel.style.display = 'block';
+            presentationPanel.style.display = 'none';
+            if(typingDisplay) typingDisplay.innerHTML = "";
         }
         
-        // Sự kiện nút điều khiển trong animation
-        function nextLine() {
-            if (!lyricsArray.length) return;
-            stopAutoPlay();
-            if (currentIndex + 1 < lyricsArray.length) {
-                currentIndex++;
-                updateLyricDisplay();
-            } else {
-                // vòng lại đầu danh sách
-                currentIndex = 0;
-                updateLyricDisplay();
-                addTemporaryGlow();
-            }
-        }
-        
-        function prevLine() {
-            if (!lyricsArray.length) return;
-            stopAutoPlay();
-            if (currentIndex - 1 >= 0) {
-                currentIndex--;
-                updateLyricDisplay();
-            } else {
-                // lên dòng cuối nếu muốn hoặc giữ nguyên
-                currentIndex = lyricsArray.length - 1;
-                updateLyricDisplay();
-                addTemporaryGlow();
-            }
-        }
-        
-        function toggleAutoPlay() {
-            if (!lyricsArray.length) return;
-            if (isAutoPlaying) {
-                stopAutoPlay();
-            } else {
-                startAutoPlay();
-            }
-        }
-        
-        // Gán sự kiện các nút
-        runBtn.addEventListener('click', switchToAnimation);
-        backBtn.addEventListener('click', backToInput);
-        nextLineBtn.addEventListener('click', nextLine);
-        prevLineBtn.addEventListener('click', prevLine);
-        playAutoBtn.addEventListener('click', toggleAutoPlay);
-        
-        // Nếu người dùng nhấn phím tắt hoặc muốn trải nghiệm thêm: nhập mẫu sẵn "Không Buông" (gợi ý)
-        // Thiết lập mẫu lời đẹp cho bài Hngle
-        const defaultLyric = `Không buông đôi tay này
-Dù giông tố phủ vây
-Chỉ cần em ở đây
-Là bình yên chốn này
-
-Hngle ơi, không buông
-Giữ mãi trong tim
-Tình yêu như ánh sáng
-Xua tan màn đêm đen`;
-        
-        lyricInput.value = defaultLyric;
-        
-        // thêm hiệu ứng nhấn nút gợi cảm giác
-        const allBtns = document.querySelectorAll('button');
-        allBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                btn.style.transform = 'scale(0.96)';
-                setTimeout(() => { btn.style.transform = ''; }, 120);
-            });
+        // Sự kiện nút
+        runBtn.addEventListener('click', () => {
+            initPresentation();
         });
         
-        // tự động focus vào text nếu cần
-        lyricInput.focus();
-        
-        // đảm bảo khi quay lại từ animation, có thể tiếp tục nhập lời mới
-        window.addEventListener('load', () => {
-            // kiểm tra nếu có sẵn lời nhạc hay chưa
-            console.log("Ready - Trần Minh Tuấn 2k12 - Animation lời nhạc siêu cấp");
+        resetShowBtn.addEventListener('click', () => {
+            resetToInput();
         });
         
-        // thêm hiệu ứng nền động nhẹ di chuyển theo chuột (optional siêu nhẹ)
-        document.body.addEventListener('mousemove', (e) => {
-            const orbs = document.querySelectorAll('.orb');
-            if (orbs.length) {
-                const x = e.clientX / window.innerWidth;
-                const y = e.clientY / window.innerHeight;
-                orbs[0].style.transform = `translate(${x * 15}px, ${y * 10}px)`;
-                if(orbs[1]) orbs[1].style.transform = `translate(${-x * 12}px, ${-y * 8}px)`;
+        prevLineBtn.addEventListener('click', () => {
+            if(!lyricsLines.length) return;
+            if(isPaused) {
+                goToPrevLine();
+            } else {
+                // tạm dừng auto khi bấm thủ công
+                let wasAuto = isAutoMode;
+                isAutoMode = false;
+                cancelSchedule();
+                stopAllTimers();
+                goToPrevLine();
+                isAutoMode = wasAuto; // khôi phục auto mode (nếu muốn giữ)
+                if(isAutoMode) scheduleNextLine();
+            }
+            updateProgressStatus();
+        });
+        
+        nextLineBtn.addEventListener('click', () => {
+            if(!lyricsLines.length) return;
+            if(isPaused) {
+                goToNextLine();
+            } else {
+                let wasAuto = isAutoMode;
+                isAutoMode = false;
+                cancelSchedule();
+                stopAllTimers();
+                goToNextLine();
+                isAutoMode = wasAuto;
+                if(isAutoMode) scheduleNextLine();
+            }
+            updateProgressStatus();
+        });
+        
+        playPauseBtn.addEventListener('click', () => {
+            togglePause();
+        });
+        
+        // Khi thay đổi tốc độ / thời gian trong lúc trình diễn có thể cập nhật schedule mới? 
+        // Để trải nghiệm tốt: nếu đang chạy và auto mode, khi thời gian thay đổi ta cập nhật lại schedule
+        function applyDynamicTime() {
+            if(presentationPanel.style.display === 'block' && isAutoMode && !isPaused && !isTyping && currentCharIndex >= currentFullLine.length) {
+                // nếu đã gõ xong câu hiện tại, cập nhật lại timer
+                cancelSchedule();
+                scheduleNextLine();
+            }
+            updateProgressStatus();
+        }
+        
+        timePerLineInput.addEventListener('change', applyDynamicTime);
+        typingSpeedInput.addEventListener('change', () => {
+            // tốc độ gõ thay đổi không ảnh hưởng đến câu đang gõ dở? nếu đang gõ thì hơi rối.
+            // nhưng để an toàn, không làm gián đoạn, ta chỉ áp dụng cho lần gõ kế tiếp.
+            if(presentationPanel.style.display === 'block' && isTyping === true) {
+                // đang gõ, không can thiệp đột ngột
             }
         });
+        
+        // Gán mẫu lời đẹp của bài "Không Buông - Hngle" thân thiện
+        const defaultLyrics = `🌙 Không buông tay anh nhé em
+💖 Dù cho mai đây xa cách
+🎵 Vẫn mãi yêu thương không rời
+✨ Không Buông - Hngle ơi
+🔥 Trần Minh Tuấn 2k12 lắng nghe
+💫 Để tình mình mãi lung linh`;
+        lyricsTextArea.value = defaultLyrics;
+        
+        // thêm hiệu ứng nhẹ khi load
+        console.log("Ready - giao diện gõ phím thân thiện, căn thời gian chuẩn từng câu");
     })();
 </script>
 </body>
